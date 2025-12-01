@@ -121,6 +121,23 @@
               @if (addProjectForm.get('imagenes')?.invalid && addProjectForm.get('imagenes')?.touched) {
                 <small class="error-text">Add at least one image.</small>
               }
+              <div class="file-upload-controls">
+                <input
+                  type="file"
+                  accept="image/*"
+                  (change)="handleImageFileChange($event)"
+                  [disabled]="isUploadingImage">
+                <small class="helper-text">Upload an image file to automatically add its URL.</small>
+              </div>
+              @if (isUploadingImage) {
+                <small class="status-text">Uploading image...</small>
+              }
+              @if (imageUploadError) {
+                <small class="error-text">{{ imageUploadError }}</small>
+              }
+              @if (imageUploadSuccess) {
+                <small class="success-text">{{ imageUploadSuccess }}</small>
+              }
             </label>
 
             <label class="form-field">

@@ -168,6 +168,36 @@
         font-size: 0.85rem;
         margin-top: 4px;
       }
+
+      .success-text {
+        color: #059669;
+        font-size: 0.85rem;
+        margin-top: 4px;
+      }
+
+      .status-text {
+        color: #6b7280;
+        font-size: 0.85rem;
+        margin-top: 4px;
+      }
+
+      .helper-text {
+        color: #6b7280;
+        font-size: 0.8rem;
+        margin-left: 4px;
+      }
+
+      .file-upload-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+
+        input[type="file"] {
+          font-size: 0.9rem;
+        }
+      }
     }
 
     .form-row {

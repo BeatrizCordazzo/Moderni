@@ -156,21 +156,26 @@ export class Bathroom implements OnInit {
 
     this.datosService.getBathroomSets().subscribe({
       next: (apiProducts: ApiProduct[]) => {
-        this.bathroomSets = apiProducts.map((ap) => ({
-          id: ap.id,
-          name: ap.name,
-          style: ap.style || '',
-          description: ap.description,
-          basePrice: ap.price,
-          image: ap.image,
-          includes: ap.includes || [],
-          dimensions: {
-            width: ap.dimensions?.width || '',
-            height: ap.dimensions?.height || '',
-            depth: ap.dimensions?.depth || '',
-          },
-          availableColors: ap.colors,
-        }));
+        this.bathroomSets = apiProducts.map((ap) => {
+          const colors = Array.isArray(ap.colors) && ap.colors.length
+            ? ap.colors
+            : [{ name: 'Personalizado', code: '#C0C0C0' }];
+          return {
+            id: ap.id,
+            name: ap.name,
+            style: ap.style || '',
+            description: ap.description,
+            basePrice: ap.price,
+            image: ap.image,
+            includes: ap.includes || [],
+            dimensions: {
+              width: ap.dimensions?.width || '',
+              height: ap.dimensions?.height || '',
+              depth: ap.dimensions?.depth || '',
+            },
+            availableColors: colors,
+          };
+        });
 
         this.isLoading = false;
       },
@@ -391,7 +396,7 @@ export class Bathroom implements OnInit {
 
   selectSet(set: BathroomSet) {
     this.selectedSet = set;
-    this.selectedSetColor = set.availableColors[0];
+    this.selectedSetColor = this.resolvePrimaryColor(set.availableColors);
     this.showColorPicker = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -414,7 +419,7 @@ export class Bathroom implements OnInit {
   addCustomFurniture(furniture: CustomFurniture) {
     const selection: CustomSelection = {
       furniture: furniture,
-      selectedColor: furniture.availableColors[0],
+      selectedColor: this.resolvePrimaryColor(furniture.availableColors),
       customWidth: furniture.dimensions.minWidth,
       customHeight: furniture.dimensions.minHeight,
       quantity: 1,
@@ -818,9 +823,12 @@ export class Bathroom implements OnInit {
   }
 
   addSetToCart() {
-    if (!this.selectedSet || !this.selectedSetColor) {
+    if (!this.selectedSet) {
       alert('Please select a bathroom set and color.');
       return;
+    }
+    if (!this.selectedSetColor) {
+      this.selectedSetColor = this.resolvePrimaryColor(this.selectedSet.availableColors);
     }
 
     this.modalProductId = this.selectedSet.id;
@@ -842,7 +850,7 @@ export class Bathroom implements OnInit {
 
   quickAddToCart(set: BathroomSet) {
     // Add set to cart with default/first color
-    const defaultColor = set.availableColors[0];
+    const defaultColor = this.resolvePrimaryColor(set.availableColors);
 
     this.modalProductId = set.id;
     this.modalItem = {
@@ -1039,5 +1047,12 @@ export class Bathroom implements OnInit {
         }, 4000);
       },
     });
+  }
+
+  private resolvePrimaryColor(colors?: Color[]): Color {
+    if (Array.isArray(colors) && colors.length > 0) {
+      return colors[0];
+    }
+    return { name: 'Personalizado', code: '#C0C0C0' };
   }
 }

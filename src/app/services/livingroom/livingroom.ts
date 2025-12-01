@@ -292,7 +292,11 @@ export class Livingroom implements OnInit {
 
     this.datosService.getLivingRoomSets().subscribe({
       next: (apiProducts: ApiProduct[]) => {
-        this.livingRoomSets = apiProducts.map((ap) => ({
+        this.livingRoomSets = apiProducts.map((ap) => {
+          const colors = Array.isArray(ap.colors) && ap.colors.length
+            ? ap.colors
+            : [{ name: 'Custom', code: '#C0C0C0' }];
+          return {
           id: ap.id,
           name: ap.name,
           style: ap.style || '',
@@ -305,8 +309,9 @@ export class Livingroom implements OnInit {
             height: ap.dimensions?.height || '',
             depth: ap.dimensions?.depth || '',
           },
-          availableColors: ap.colors,
-        }));
+          availableColors: colors,
+        };
+        });
 
         this.isLoading = false;
       },
@@ -352,7 +357,7 @@ export class Livingroom implements OnInit {
 
   selectSet(set: LivingRoomSet) {
     this.selectedSet = set;
-    this.selectedSetColor = set.availableColors[0];
+    this.selectedSetColor = this.resolvePrimaryColor(set.availableColors);
     this.showColorPicker = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -579,8 +584,12 @@ export class Livingroom implements OnInit {
 
   addSetToCart() {
     if (!this.selectedSet || !this.selectedSetColor) {
-      alert('Please select a living room set and color.');
-      return;
+      if (this.selectedSet) {
+        this.selectedSetColor = this.resolvePrimaryColor(this.selectedSet.availableColors);
+      } else {
+        alert('Please select a living room set and color.');
+        return;
+      }
     }
 
     this.modalProductId = this.selectedSet.id;
@@ -603,7 +612,7 @@ export class Livingroom implements OnInit {
 
   quickAddToCart(set: LivingRoomSet) {
     // Add set to cart with default/first color
-    const defaultColor = set.availableColors[0];
+    const defaultColor = this.resolvePrimaryColor(set.availableColors);
 
     this.modalProductId = set.id;
     this.modalItem = {
@@ -930,8 +939,7 @@ export class Livingroom implements OnInit {
   }
 
   private buildModalItemFromFurniture(furniture: CustomFurniture): ModalCartItem {
-    const primaryColor =
-      furniture.availableColors[0] ?? ({ name: 'Custom', code: '#C0C0C0' } as Color);
+    const primaryColor = this.resolvePrimaryColor(furniture.availableColors);
 
     return {
       id: furniture.id,
@@ -1098,5 +1106,12 @@ export class Livingroom implements OnInit {
       dimensions: { ...option.dimensions },
       availableColors: option.availableColors.map((color) => ({ ...color })),
     }));
+  }
+
+  private resolvePrimaryColor(colors?: Color[]): Color {
+    if (Array.isArray(colors) && colors.length > 0) {
+      return colors[0];
+    }
+    return { name: 'Custom', code: '#C0C0C0' };
   }
 }

@@ -532,6 +532,26 @@ export class Datos {
       );
   }
 
+  uploadProductImage(file: File): Observable<{ success: boolean; url?: string }> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<{ success: boolean; url?: string }>(
+      this.url + 'upload_product_image.php',
+      formData,
+      { withCredentials: true }
+    );
+  }
+
+  uploadShowcaseImage(file: File): Observable<{ success: boolean; url?: string; relative?: string; error?: string }> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<{ success: boolean; url?: string; relative?: string; error?: string }>(
+      this.url + 'upload_showcase_image.php',
+      formData,
+      { withCredentials: true }
+    );
+  }
+
   deleteProduct(productId: number): Observable<any> {
     return this.http
       .post<any>(this.url + 'delete_product.php', { id: productId }, { withCredentials: true })

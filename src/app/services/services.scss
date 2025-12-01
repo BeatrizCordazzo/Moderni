@@ -161,6 +161,47 @@
 			color: #d32f2f;
 			font-size: 0.8rem;
 		}
+
+		&.image-field {
+			.image-upload-row {
+				display: flex;
+				flex-direction: column;
+				gap: 0.35rem;
+				margin-top: 0.35rem;
+
+				.or-label {
+					font-size: 0.85rem;
+					color: #6b7280;
+				}
+
+				input[type='file'] {
+					border: 1px dashed rgba(59, 130, 246, 0.4);
+					padding: 0.45rem;
+					border-radius: 8px;
+					background: #f9fafb;
+					cursor: pointer;
+				}
+			}
+
+			.selected-image {
+				margin-top: 0.3rem;
+				display: flex;
+				gap: 0.5rem;
+				align-items: center;
+				font-size: 0.9rem;
+				color: #374151;
+
+				.link-button {
+					background: none;
+					border: none;
+					color: #2563eb;
+					cursor: pointer;
+					padding: 0;
+					text-decoration: underline;
+					font-size: 0.85rem;
+				}
+			}
+		}
 	}
 
 	.checkbox-row {

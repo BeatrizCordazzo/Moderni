@@ -60,12 +60,12 @@
           <div>No accepted projects.</div>
           }
           <div class="columns-wrapper">
-            <div class="column">
+            <div class="column column-todo">
               <h3>To-Do</h3>
               @if (todoProjectsList.length === 0) {
               <div class="small-muted">No projects in To-Do.</div>
               } @for (proj of todoProjectsList; track proj.proyecto_id ?? proj.id ?? proj) {
-              <div class="project-card">
+              <div class="project-card status-card status-todo">
                 <div class="project-row">
                   <div>
                     <h3>{{ proj.proyecto_nombre }}</h3>
@@ -98,12 +98,12 @@
               }
             </div>
 
-            <div class="column">
+            <div class="column column-progress">
               <h3>In Progress</h3>
               @if (inProgressProjectsList.length === 0) {
               <div class="small-muted">There are no projects in progress..</div>
               } @for (proj of inProgressProjectsList; track proj.proyecto_id ?? proj.id ?? proj) {
-              <div class="project-card">
+              <div class="project-card status-card status-progress">
                 <div class="project-row">
                   <div>
                     <h3>{{ proj.proyecto_nombre }}</h3>
@@ -136,12 +136,12 @@
               }
             </div>
 
-            <div class="column">
+            <div class="column column-done">
               <h3>Done</h3>
               @if (doneProjectsList.length === 0) {
               <div class="small-muted">There are no completed projects.</div>
               } @for (proj of doneProjectsList; track proj.proyecto_id ?? proj.id ?? proj) {
-              <div class="project-card">
+              <div class="project-card status-card status-done">
                 <div class="project-row">
                   <div>
                     <h3>{{ proj.proyecto_nombre }}</h3>
@@ -197,7 +197,7 @@
           (architectProjectsPending.length === 0) {
           <p class="empty-state">No pending submissions from architects.</p>
           } @if (architectProjectsPending.length) {
-          <div class="lista-wrapper">
+          <div class="lista-wrapper architect-table-wrapper">
             <table class="architect-table">
               <thead>
                 <tr>
@@ -213,8 +213,8 @@
               <tbody>
                 @for (proj of architectProjectsPending; track proj.id ?? proj) {
                 <tr>
-                  <td>#{{ proj.id }}</td>
-                  <td>
+                  <td data-label="ID">#{{ proj.id }}</td>
+                  <td data-label="Architect">
                     <div class="architect-author">
                       <strong>{{
                         proj.architect_name || 'Architect #' + proj.architect_id
@@ -222,16 +222,16 @@
                       <div class="small-muted">{{ proj.architect_email || '-' }}</div>
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Submitted">
                     <div>{{ proj.created_at | date : 'short' }}</div>
                     @if (proj.project_title) {
                     <div class="small-muted">{{ proj.project_title }}</div>
                     }
                   </td>
-                  <td>
+                  <td data-label="Message">
                     <p class="architect-notes">{{ proj.project_notes }}</p>
                   </td>
-                  <td>
+                  <td data-label="File">
                     @if (proj.file_url) {
                     <a
                       class="file-link"
@@ -245,7 +245,7 @@
                     <span class="small-muted">No file</span>
                     }
                   </td>
-                  <td class="architect-comment">
+                  <td class="architect-comment" data-label="Comment">
                     <textarea
                       rows="3"
                       placeholder="Optional admin comment"
@@ -253,12 +253,12 @@
                       [attr.name]="'architectComment' + proj.id"
                     ></textarea>
                   </td>
-                  <td class="architect-actions">
+                  <td class="architect-actions" data-label="Actions">
                     <button
                       type="button"
                       class="btn btn-accept"
                       [disabled]="architectDecisionSaving[proj.id]"
-                      (click)="decideArchitectProject(proj, 'accepted')"
+                      (click)="requestArchitectDecision(proj, 'accepted')"
                     >
                       Accept
                     </button>
@@ -266,7 +266,7 @@
                       type="button"
                       class="btn btn-reject"
                       [disabled]="architectDecisionSaving[proj.id]"
-                      (click)="decideArchitectProject(proj, 'rejected')"
+                      (click)="requestArchitectDecision(proj, 'rejected')"
                     >
                       Reject
                     </button>
@@ -451,12 +451,12 @@
           <div>No orders.</div>
           } @if (orders.length) {
           <div class="columns-wrapper">
-            <div class="column">
+            <div class="column column-todo">
               <h3>To-Do</h3>
               @if (orderTodoList.length === 0) {
               <div class="small-muted">No orders in To-Do.</div>
               } @for (o of orderTodoList; track o.id ?? o.pedido_id ?? o) {
-              <div class="project-card">
+              <div class="project-card status-card status-todo">
                 <div class="project-row">
                   <div>
                     <h3>{{ o.titulo || o.title || 'Order #' + (o.id || o.pedido_id) }}</h3>
@@ -485,17 +485,17 @@
                     <option value="in progress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
-                  <button class="btn btn-primary" (click)="saveOrderStatus(o)">Save</button>
+                  <button class="btn btn-primary" (click)="requestSaveOrder(o)">Save</button>
                 </div>
               </div>
               }
             </div>
-            <div class="column">
+            <div class="column column-progress">
               <h3>In Progress</h3>
               @if (orderInProgressList.length === 0) {
               <div class="small-muted">There are no orders in progress..</div>
               } @for (o of orderInProgressList; track o.id ?? o.pedido_id ?? o) {
-              <div class="project-card">
+              <div class="project-card status-card status-progress">
                 <div class="project-row">
                   <div>
                     <h3>{{ o.titulo || o.title || 'Order #' + (o.id || o.pedido_id) }}</h3>
@@ -524,17 +524,17 @@
                     <option value="in progress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
-                  <button class="btn btn-primary" (click)="saveOrderStatus(o)">Save</button>
+                  <button class="btn btn-primary" (click)="requestSaveOrder(o)">Save</button>
                 </div>
               </div>
               }
             </div>
-            <div class="column">
+            <div class="column column-done">
               <h3>Done</h3>
               @if (orderDoneList.length === 0) {
               <div class="small-muted">There are no completed orders.</div>
               } @for (o of orderDoneList; track o.id ?? o.pedido_id ?? o) {
-              <div class="project-card">
+              <div class="project-card status-card status-done">
                 <div class="project-row">
                   <div>
                     <h3>{{ o.titulo || o.title || 'Order #' + (o.id || o.pedido_id) }}</h3>
@@ -563,7 +563,7 @@
                     <option value="in progress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
-                  <button class="btn btn-primary" (click)="saveOrderStatus(o)">Save</button>
+                  <button class="btn btn-primary" (click)="requestSaveOrder(o)">Save</button>
                 </div>
               </div>
               }

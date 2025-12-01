@@ -101,9 +101,26 @@
                 <span>Style</span>
                 <input type="text" formControlName="style" placeholder="Contemporary, Rustic, etc.">
               </label>
-              <label class="form-field">
-                <span>Main Image (URL)</span>
-                <input type="url" formControlName="image" placeholder="https://">
+              <label class="form-field image-field">
+                <span>Main Image</span>
+                <input type="url" formControlName="image" placeholder="https://example.com/image.jpg" />
+                <div class="image-upload-row">
+                  <span class="or-label">or upload a file</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    (change)="onImageFileChange($event)"
+                    #imageFileInput
+                  />
+                </div>
+                @if (imageFileName) {
+                <div class="selected-image">
+                  <span>Selected file: {{ imageFileName }}</span>
+                  <button type="button" class="link-button" (click)="clearSelectedImageFile()">
+                    Remove
+                  </button>
+                </div>
+                }
               </label>
             </div>
 

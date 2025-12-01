@@ -76,6 +76,7 @@ export class AdminCarpintero implements OnInit {
   confirmMessage = '';
   confirmAction: string | null = null;
   confirmTargetId: number | null = null;
+  pendingArchitectDecision: 'accepted' | 'rejected' | null = null;
   // For status-change confirmations (not used; status changes are saved on 'Guardar')
 
   // Toast notifications
@@ -336,6 +337,20 @@ export class AdminCarpintero implements OnInit {
     });
   }
 
+  requestArchitectDecision(project: ArchitectProject, decision: 'accepted' | 'rejected'): void {
+    if (!project?.id) {
+      return;
+    }
+    this.pendingArchitectDecision = decision;
+    this.confirmTargetId = project.id;
+    this.confirmAction = 'architectDecision';
+    this.confirmMessage =
+      decision === 'accepted'
+        ? 'Do you want to accept this architect project?'
+        : 'Do you want to reject this architect project?';
+    this.showConfirmModal = true;
+  }
+
   getArchitectProjectFileUrl(project: ArchitectProject): string {
     if (!project?.file_url) {
       return '';
@@ -523,7 +538,7 @@ export class AdminCarpintero implements OnInit {
   }
 
 
-  async submitUserForm(): Promise<void> {
+  submitUserForm(): void {
     const form = this.createUserForm;
     const nombre = form.nombre.trim();
     const email = form.email.trim();
@@ -555,15 +570,6 @@ export class AdminCarpintero implements OnInit {
       return;
     }
 
-    let hashedPassword: string;
-    try {
-      hashedPassword = await this.hashPassword(passwordValue);
-    } catch (error) {
-      console.error('Error hashing password', error);
-      this.showToast('Failed to process the password', 'error');
-      return;
-    }
-
     const payload: ManagedUserPayload & {
       nombre: string;
       email: string;
@@ -574,7 +580,7 @@ export class AdminCarpintero implements OnInit {
       email,
       rol: form.rol,
       telefono: telefono ? telefono : null,
-      password: hashedPassword,
+      password: passwordValue,
     };
 
     this.savingUser = true;
@@ -647,22 +653,6 @@ export class AdminCarpintero implements OnInit {
     }
 
     return null;
-  }
-
-  private async hashPassword(plainText: string): Promise<string> {
-    if (!plainText) {
-      throw new Error('Invalid password value');
-    }
-
-    if (!crypto?.subtle) {
-      throw new Error('Crypto API not available');
-    }
-
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plainText);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
   }
 
   private createEmptyUserForm(): UserFormModel {
@@ -781,7 +771,7 @@ export class AdminCarpintero implements OnInit {
 
   // Save order status (local update; backend endpoint can be added later)
   saveOrderStatus(order: any): void {
-    if (!order || !order.id) return;
+    if (!order) return;
     const newStatus = order.pendingEstado ?? order.estado;
     if (
       (order.estado || '').toString().toLowerCase() === (newStatus || '').toString().toLowerCase()
@@ -791,7 +781,11 @@ export class AdminCarpintero implements OnInit {
       return;
     }
     // Persist the order status via API
-    const id = order.id || order.pedido_id;
+    const id = this.getOrderIdentifier(order);
+    if (id === null) {
+      this.showToast('Order reference missing', 'error');
+      return;
+    }
     this.datos.updateOrderStatus(id, newStatus).subscribe({
       next: (res: any) => {
         order.estado = newStatus;
@@ -805,6 +799,15 @@ export class AdminCarpintero implements OnInit {
         this.showToast('Error saving order status', 'error');
       },
     });
+  }
+
+  requestSaveOrder(order: any): void {
+    const identifier = this.getOrderIdentifier(order);
+    if (identifier === null) return;
+    this.confirmMessage = 'Do you want to save the changes to this order?';
+    this.confirmAction = 'saveOrder';
+    this.confirmTargetId = identifier;
+    this.showConfirmModal = true;
   }
 
   // Request confirmation before saving a single project
@@ -904,6 +907,21 @@ export class AdminCarpintero implements OnInit {
       }
       } else if (action === 'saveAllAccepted') {
         this.saveAllAccepted();
+      } else if (action === 'saveOrder' && target !== null) {
+        const order = this.orders.find((o) => this.getOrderIdentifier(o) === target);
+        if (order) {
+          this.saveOrderStatus(order);
+        } else {
+          this.showToast('Order not found', 'error');
+        }
+      } else if (action === 'architectDecision' && target && this.pendingArchitectDecision) {
+        const project =
+          this.architectProjectsPending.find((proj) => proj.id === target) ||
+          this.architectProjectsAccepted.find((proj) => proj.id === target);
+        if (project) {
+          this.decideArchitectProject(project, this.pendingArchitectDecision);
+        }
+        this.pendingArchitectDecision = null;
       } else if (action === 'deleteManagedUser' && target) {
         this.deleteManagedUser(target);
       } else if (action === 'deleteSketchupProject' && target) {
@@ -1007,6 +1025,7 @@ export class AdminCarpintero implements OnInit {
     this.showConfirmModal = false;
     this.confirmAction = null;
     this.confirmTargetId = null;
+    this.pendingArchitectDecision = null;
   }
 
   // Price modal handlers
@@ -1062,6 +1081,14 @@ export class AdminCarpintero implements OnInit {
   closeDetails(): void {
     this.showDetailModal = false;
     this.detailModalData = null;
+  }
+
+  private getOrderIdentifier(order: any): number | null {
+    if (!order) return null;
+    const raw = order.id ?? order.pedido_id;
+    if (raw === null || raw === undefined) return null;
+    const numeric = Number(raw);
+    return Number.isNaN(numeric) ? null : numeric;
   }
 
   // Note: status selection updates locally; confirmation happens on 'Guardar' to persist changes.

@@ -128,6 +128,7 @@ export class Profile implements OnInit, OnDestroy {
   architectProjectSubmitting = false;
   architectProjectSubmitError = '';
   architectProjectSubmitSuccess = '';
+  showArchitectSubmitConfirmModal = false;
 
   // Modal de confirmación de perfil
   showProfileConfirmModal = false;
@@ -725,31 +726,64 @@ export class Profile implements OnInit, OnDestroy {
     });
   }
 
+  requestArchitectProjectSubmit(event?: Event): void {
+    event?.preventDefault();
+    if (!this.isArchitectUser || this.architectProjectSubmitting) {
+      return;
+    }
+    const validationError = this.validateArchitectProjectForm();
+    if (validationError) {
+      this.architectProjectSubmitError = validationError;
+      this.architectProjectSubmitSuccess = '';
+      return;
+    }
+    this.architectProjectSubmitError = '';
+    this.architectProjectSubmitSuccess = '';
+    this.showArchitectSubmitConfirmModal = true;
+  }
+
+  onConfirmArchitectProjectSubmit(): void {
+    this.showArchitectSubmitConfirmModal = false;
+    this.submitArchitectProject();
+  }
+
+  onCancelArchitectProjectSubmit(): void {
+    this.showArchitectSubmitConfirmModal = false;
+  }
+
+  private validateArchitectProjectForm(): string | null {
+    const notes = this.architectProjectForm.notes.trim();
+    if (!notes) {
+      return 'Please describe the project.';
+    }
+    if (!this.architectProjectForm.file) {
+      return 'Please attach a file.';
+    }
+    return null;
+  }
+
   submitArchitectProject(): void {
     if (!this.isArchitectUser || this.architectProjectSubmitting) {
       return;
     }
+    const validationError = this.validateArchitectProjectForm();
+    if (validationError) {
+      this.architectProjectSubmitError = validationError;
+      this.architectProjectSubmitSuccess = '';
+      return;
+    }
     const notes = this.architectProjectForm.notes.trim();
-    if (!notes) {
-      this.architectProjectSubmitError = 'Please describe the project.';
-      this.architectProjectSubmitSuccess = '';
-      return;
-    }
-    if (!this.architectProjectForm.file) {
-      this.architectProjectSubmitError = 'Please attach a file.';
-      this.architectProjectSubmitSuccess = '';
-      return;
-    }
 
     const formData = new FormData();
+    const projectFile = this.architectProjectForm.file as File;
     if (this.architectProjectForm.title.trim()) {
       formData.append('project_title', this.architectProjectForm.title.trim());
     }
     formData.append('project_notes', notes);
     formData.append(
       'project_file',
-      this.architectProjectForm.file,
-      this.architectProjectForm.file.name
+      projectFile,
+      projectFile.name
     );
 
     this.architectProjectSubmitting = true;

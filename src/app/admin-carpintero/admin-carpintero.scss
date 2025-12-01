@@ -58,6 +58,34 @@
 .column { background: transparent; padding: 0; }
 .column h3 { margin:0 0 0.5rem 0; font-size:1.05rem; }
 .column .project-card { margin-bottom: 0.75rem; }
+.column-todo h3 { color: #b45309; }
+.column-progress h3 { color: #1d4ed8; }
+.column-done h3 { color: #166534; }
+
+.status-card {
+  border-top: 4px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.status-todo {
+  border-color: #fbbf24;
+  background: linear-gradient(180deg, #fff9eb, theme.color('surface'));
+}
+
+.status-progress {
+  border-color: #60a5fa;
+  background: linear-gradient(180deg, #eef5ff, theme.color('surface'));
+}
+
+.status-done {
+  border-color: #34d399;
+  background: linear-gradient(180deg, #ecfdf5, theme.color('surface'));
+}
 
 @media (min-width: 900px) {
   .columns-wrapper { flex-direction: row; }
@@ -140,6 +168,11 @@
   border-collapse: collapse;
 }
 
+.architect-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .architect-table th,
 .architect-table td {
   border-bottom: 1px solid #eef2f6;
@@ -182,6 +215,58 @@
   .architect-actions {
     flex-direction: row;
     align-items: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .architect-table {
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .architect-table thead {
+    display: none;
+  }
+
+  .architect-table tbody tr {
+    display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #fff;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+  }
+
+  .architect-table tbody tr td {
+    display: flex;
+    flex-direction: column;
+    padding: 0.45rem 0;
+    border-bottom: none;
+  }
+
+  .architect-table tbody tr td[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.03em;
+  }
+
+  .architect-comment textarea {
+    min-height: 4.5rem;
+  }
+
+  .architect-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .architect-actions .btn {
+    width: 100%;
   }
 }
 
@@ -713,5 +798,3 @@
   display: inline-flex;
   align-items: center;
 }
-
-

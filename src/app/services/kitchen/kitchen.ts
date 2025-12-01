@@ -159,21 +159,26 @@ export class Kitchen implements OnInit {
     this.datosService.getKitchenSets().subscribe({
       next: (apiProducts: ApiProduct[]) => {
         // Map API products to KitchenSet interface
-        this.kitchenSets = apiProducts.map((ap, index) => ({
-          id: ap.id,
-          name: ap.name,
-          style: ap.style || '',
-          description: ap.description,
-          basePrice: ap.price,
-          image: ap.image,
-          includes: ap.includes || [],
-          dimensions: {
-            width: ap.dimensions?.width || '',
-            height: ap.dimensions?.height || '',
-            depth: ap.dimensions?.depth || ''
-          },
-          availableColors: ap.colors
-        }));
+        this.kitchenSets = apiProducts.map((ap, index) => {
+          const colors = Array.isArray(ap.colors) && ap.colors.length
+            ? ap.colors
+            : [{ name: 'Custom', code: '#C0C0C0' }];
+          return {
+            id: ap.id,
+            name: ap.name,
+            style: ap.style || '',
+            description: ap.description,
+            basePrice: ap.price,
+            image: ap.image,
+            includes: ap.includes || [],
+            dimensions: {
+              width: ap.dimensions?.width || '',
+              height: ap.dimensions?.height || '',
+              depth: ap.dimensions?.depth || '',
+            },
+            availableColors: colors,
+          };
+        });
         
         this.isLoading = false;
       },
@@ -350,7 +355,7 @@ export class Kitchen implements OnInit {
 
   selectSet(set: KitchenSet) {
     this.selectedSet = set;
-    this.selectedSetColor = set.availableColors[0];
+    this.selectedSetColor = this.resolvePrimaryColor(set.availableColors);
     this.showColorPicker = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -374,7 +379,7 @@ export class Kitchen implements OnInit {
   addCustomFurniture(furniture: CustomFurniture) {
     const selection: CustomSelection = {
       furniture: furniture,
-      selectedColor: furniture.availableColors[0],
+      selectedColor: this.resolvePrimaryColor(furniture.availableColors),
       customWidth: furniture.dimensions.minWidth,
       customHeight: furniture.dimensions.minHeight,
       quantity: 1
@@ -701,9 +706,12 @@ export class Kitchen implements OnInit {
   }
 
   addSetToCart() {
-    if (!this.selectedSet || !this.selectedSetColor) {
+    if (!this.selectedSet) {
       alert('Please select a kitchen set and color.');
       return;
+    }
+    if (!this.selectedSetColor) {
+      this.selectedSetColor = this.resolvePrimaryColor(this.selectedSet.availableColors);
     }
 
     this.modalProductId = this.selectedSet.id;
@@ -726,7 +734,7 @@ export class Kitchen implements OnInit {
 
   quickAddToCart(set: KitchenSet) {
     // Add set to cart with default/first color
-    const defaultColor = set.availableColors[0];
+    const defaultColor = this.resolvePrimaryColor(set.availableColors);
     
     this.modalProductId = set.id;
     this.modalItem = {
@@ -992,8 +1000,7 @@ export class Kitchen implements OnInit {
   }
   
   private buildModalItemFromFurniture(furniture: CustomFurniture): ModalCartItem {
-    const primaryColor =
-      furniture.availableColors[0] ?? ({ name: 'Custom', code: '#C0C0C0' } as Color);
+    const primaryColor = this.resolvePrimaryColor(furniture.availableColors);
 
     return {
       id: furniture.id,
@@ -1071,5 +1078,12 @@ export class Kitchen implements OnInit {
       dimensions: { ...option.dimensions },
       availableColors: option.availableColors.map((color) => ({ ...color }))
     }));
+  }
+
+  private resolvePrimaryColor(colors?: Color[]): Color {
+    if (Array.isArray(colors) && colors.length > 0) {
+      return colors[0];
+    }
+    return { name: 'Custom', code: '#C0C0C0' };
   }
 }

@@ -28,15 +28,14 @@
     @if (user && !notLogged && !isLoading) {
     <!-- Header del perfil -->
     <section class="profile-header">
-      <div class="profile-avatar">
-        <img [src]="user?.avatar" [alt]="user?.name || 'Profile avatar'" />
-        <button class="change-avatar" aria-label="Change photo">
+      <div class="profile-avatar" aria-hidden="true">
+        <div class="avatar-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path
-              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-9 1.7-9 5v3h18v-3c0-3.3-5.7-5-9-5z"
             />
           </svg>
-        </button>
+        </div>
       </div>
       <div class="profile-info">
         <h1>{{ user?.name }}</h1>
@@ -639,7 +638,6 @@
               } @if (item.extra?.category) {
               <p class="favorite-meta">Category: {{ item.extra?.category }}</p>
               }
-              <button class="add-to-cart-btn" type="button">Saved</button>
             </div>
           </article>
           }
@@ -661,7 +659,7 @@
               Upload the plan and notes so the carpentry team can review it.
             </p>
           </div>
-          <form class="architect-form" (submit)="submitArchitectProject(); $event.preventDefault()">
+          <form class="architect-form" (submit)="requestArchitectProjectSubmit($event)">
             <label>
               Project title (optional)
               <input
@@ -993,6 +991,17 @@
       cancelLabel="Cancel"
       (confirm)="onConfirmLogout()"
       (cancel)="onCancelLogout()"
+    >
+    </app-confirmation-modal>
+
+    <app-confirmation-modal
+      [isOpen]="showArchitectSubmitConfirmModal"
+      title="Send project"
+      message="Send this project and attachment to the admin?"
+      confirmLabel="Send project"
+      cancelLabel="Cancel"
+      (confirm)="onConfirmArchitectProjectSubmit()"
+      (cancel)="onCancelArchitectProjectSubmit()"
     >
     </app-confirmation-modal>
 

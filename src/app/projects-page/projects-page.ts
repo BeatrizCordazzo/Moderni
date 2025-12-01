@@ -30,6 +30,9 @@ export class ProjectsPage implements OnInit, OnDestroy {
   isSaving = false;
   saveError = '';
   saveSuccess = '';
+  isUploadingImage = false;
+  imageUploadError = '';
+  imageUploadSuccess = '';
   addProjectForm: FormGroup;
   
   // Confirmation modal
@@ -121,10 +124,58 @@ export class ProjectsPage implements OnInit, OnDestroy {
   toggleAddForm() {
     this.showAddForm = !this.showAddForm;
     this.saveError = '';
+    this.imageUploadError = '';
+    this.imageUploadSuccess = '';
+    this.isUploadingImage = false;
     if (!this.showAddForm) {
       this.saveSuccess = '';
       this.resetForm();
     }
+  }
+
+  handleImageFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input?.files || input.files.length === 0 || this.isUploadingImage) {
+      return;
+    }
+    const file = input.files[0];
+    this.imageUploadError = '';
+    this.imageUploadSuccess = '';
+    this.isUploadingImage = true;
+
+    this.datosService.uploadShowcaseImage(file).subscribe({
+      next: (res) => {
+        this.isUploadingImage = false;
+        const url = res?.url ?? res?.relative ?? null;
+        if (!res?.success || !url) {
+          this.imageUploadError = res?.error || 'Image upload did not return a valid URL.';
+          input.value = '';
+          return;
+        }
+
+        const control = this.addProjectForm.get('imagenes');
+        const currentValue = (control?.value || '').toString();
+        const urls = this.parseImagenes(currentValue);
+        if (urls.length >= 4) {
+          this.imageUploadError = 'You can only add up to 4 images per project.';
+          input.value = '';
+          return;
+        }
+
+        urls.push(url);
+        control?.setValue(urls.join('\n'));
+        control?.markAsDirty();
+        control?.markAsTouched();
+        this.imageUploadSuccess = 'Image uploaded and added to the list.';
+        input.value = '';
+      },
+      error: (err) => {
+        console.error('Error uploading showcase image:', err);
+        this.isUploadingImage = false;
+        this.imageUploadError = err?.error?.error || 'Failed to upload the image.';
+        input.value = '';
+      }
+    });
   }
   
   submitNewProject() {
@@ -217,6 +268,9 @@ export class ProjectsPage implements OnInit, OnDestroy {
       materiales: '',
       destacado: false
     });
+    this.imageUploadError = '';
+    this.imageUploadSuccess = '';
+    this.isUploadingImage = false;
   }
   
   private parseImagenes(raw: string | null | undefined): string[] {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Nav } from '../nav/nav';
 import { Footer } from '../footer/footer';
 import { RouterLink, RouterOutlet } from '@angular/router';
@@ -25,13 +25,15 @@ export class Services implements OnInit, OnDestroy {
   saveError = '';
   saveSuccess = '';
   addProductForm: FormGroup;
+  selectedImageFile: File | null = null;
+  imageFileName = '';
 
   productTypeOptions: ProductTypeOption[] = [
-    { label: 'Cocina (sets completos)', value: 'set_kitchen', category: 'Kitchen Sets' },
-    { label: 'Baño (sets completos)', value: 'set_bathroom', category: 'Bathroom Sets' },
-    { label: 'Dormitorio (sets completos)', value: 'set_bedroom', category: 'Bedroom Sets' },
-    { label: 'Sala (sets completos)', value: 'set_livingroom', category: 'Living Room Sets' },
-    { label: 'Mueble individual', value: 'individual' }
+    { label: 'Kitchen (full sets)', value: 'set_kitchen', category: 'Kitchen Sets' },
+    { label: 'Bathroom (full sets)', value: 'set_bathroom', category: 'Bathroom Sets' },
+    { label: 'Bedroom (full sets)', value: 'set_bedroom', category: 'Bedroom Sets' },
+    { label: 'Living room (full sets)', value: 'set_livingroom', category: 'Living Room Sets' },
+    { label: 'Individual piece', value: 'individual' }
   ];
 
   individualCategoryOptions: string[] = [
@@ -45,6 +47,8 @@ export class Services implements OnInit, OnDestroy {
   ];
 
   private typeSubscription?: Subscription;
+
+  @ViewChild('imageFileInput') imageFileInput?: ElementRef<HTMLInputElement>;
 
   constructor(private datosService: Datos, private fb: FormBuilder) {
     this.addProductForm = this.fb.group({
@@ -122,7 +126,7 @@ export class Services implements OnInit, OnDestroy {
       oldPrice: raw.oldPrice !== null && raw.oldPrice !== undefined && raw.oldPrice !== '' ? Number(raw.oldPrice) : null,
       stock: raw.stock !== null && raw.stock !== undefined ? Number(raw.stock) : 0,
       inStock: raw.inStock ?? true,
-      image: raw.image?.trim(),
+      image: '',
       style: raw.style?.trim(),
       includes: this.parseListEntries(raw.includes),
       colors: this.parseColors(raw.colors)
@@ -136,17 +140,43 @@ export class Services implements OnInit, OnDestroy {
     this.saveError = '';
     this.saveSuccess = '';
 
-    this.datosService.createProduct(payload).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.saveSuccess = 'Producto creado correctamente.';
-        this.resetForm();
-      },
-      error: (err) => {
-        this.isSaving = false;
-        this.saveError = err?.error?.error || 'No se pudo crear el producto.';
+    const finalizeCreate = (imageUrl: string) => {
+      payload.image = imageUrl?.trim() || (raw.image?.trim() ?? '');
+      if (!payload.image) {
+        delete payload.image;
       }
-    });
+      this.datosService.createProduct(payload).subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.saveSuccess = 'Product created successfully.';
+          this.resetForm();
+        },
+        error: (err) => {
+          this.isSaving = false;
+          this.saveError = err?.error?.error || 'Could not create the product.';
+        }
+      });
+    };
+
+    if (this.selectedImageFile) {
+      this.datosService.uploadProductImage(this.selectedImageFile).subscribe({
+        next: (res) => {
+          if (res?.success && res.url) {
+            finalizeCreate(res.url);
+          } else {
+            this.isSaving = false;
+            this.saveError = res?.url === '' ? 'Failed to upload the image.' : (res as any)?.error || 'Failed to upload the image.';
+          }
+        },
+        error: (err) => {
+          console.error('Error uploading product image', err);
+          this.isSaving = false;
+          this.saveError = err?.error?.error || 'Failed to upload the image.';
+        }
+      });
+    } else {
+      finalizeCreate(raw.image?.trim() || '');
+    }
   }
 
   private resetForm() {
@@ -169,6 +199,7 @@ export class Services implements OnInit, OnDestroy {
       colors: ''
     });
     this.syncCategoryFromType('set_kitchen');
+    this.clearSelectedImageFile();
   }
 
   private syncCategoryFromType(type: string | null | undefined) {
@@ -251,5 +282,24 @@ export class Services implements OnInit, OnDestroy {
       height: height || undefined,
       depth: depth || undefined
     };
+  }
+
+  onImageFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files && input.files.length ? input.files[0] : null;
+    if (!file) {
+      this.clearSelectedImageFile();
+      return;
+    }
+    this.selectedImageFile = file;
+    this.imageFileName = file.name;
+  }
+
+  clearSelectedImageFile() {
+    this.selectedImageFile = null;
+    this.imageFileName = '';
+    if (this.imageFileInput?.nativeElement) {
+      this.imageFileInput.nativeElement.value = '';
+    }
   }
 }
