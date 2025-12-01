@@ -128,7 +128,7 @@ export class CartConfirmationModal {
       };
       console.log('CartConfirmationModal.confirmSave: sending direct fetch to update_product.php with', payload);
       // Use fetch directly to ensure credentials are included even if HttpClient config differs
-      fetch('http://localhost/moderni/update_product.php', {
+      fetch('https://moderni.infinityfreeapp.com/update_product.php', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
