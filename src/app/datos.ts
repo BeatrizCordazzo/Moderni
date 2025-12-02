@@ -149,7 +149,7 @@ export interface FavoritePayload {
   providedIn: 'root',
 })
 export class Datos {
-  url = 'https://moderni.infinityfreeapp.com/moderni/';
+  url = 'http://localhost/moderni/';
   // Emit when a product is updated so other components can refresh their local lists
   private productUpdated = new Subject<any>();
   productUpdated$ = this.productUpdated.asObservable();
