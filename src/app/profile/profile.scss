@@ -1,12 +1,43 @@
 ﻿@use 'styles/theme' as theme;
 
 .profile-page {
+  position: relative;
   min-height: 100vh;
-  background: linear-gradient(180deg, theme.color('surface-muted') 0%, theme.color('surface') 100%);
   padding: 6rem 0 4rem;
+  background: linear-gradient(160deg, theme.color('sand') 0%, theme.color('linen') 45%, theme.color('surface') 100%);
+  overflow: hidden;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(theme.color('primary'), 0.25), transparent 70%);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+
+  &::before {
+    top: -120px;
+    right: -80px;
+  }
+
+  &::after {
+    bottom: -140px;
+    left: -60px;
+    background: radial-gradient(circle, rgba(theme.color('brand-blue'), 0.18), transparent 70%);
+  }
 
   @media (max-width: 768px) {
     padding: 5rem 0 3rem;
+
+    &::before,
+    &::after {
+      width: 320px;
+      height: 320px;
+    }
   }
 }
 
@@ -14,6 +45,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .profile-header {
@@ -90,45 +123,44 @@
 }
 
 .profile-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
-  background: theme.color('primary-dark', 0.95);
-  padding: 1rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px theme.color('primary', 0.2);
-  border: 2px solid theme.color('primary', 0.15);
-  overflow-x: auto;
+  padding: 1.25rem;
+  border-radius: 24px;
+  background: linear-gradient(
+      135deg,
+      rgba(theme.color('surface-alt'), 0.85),
+      rgba(theme.color('surface'), 0.9)
+    ),
+    theme.gradient('brand');
+  border: 1.5px solid theme.color('primary', 0.1);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.15);
 
   @media (max-width: 768px) {
-    gap: 0.5rem;
-    padding: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: 1rem;
+    gap: 0.75rem;
   }
 
   .tab {
-    flex: 1;
-    min-width: fit-content;
-    padding: 1rem 1.5rem;
-    background: transparent;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(theme.color('primary'), 0.15);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: left;
+    color: theme.color('espresso');
 
     &:hover {
-      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
     }
 
     &.active {
@@ -137,19 +169,103 @@
         theme.color('primary') 0%,
         theme.color('primary-dark') 100%
       );
+      box-shadow: 0 14px 30px rgba(theme.color('primary'), 0.4);
       color: white;
       border-color: transparent;
+
+      .tab-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .tab-title,
+      .tab-desc {
+        color: white;
+      }
+
+      .tab-indicator {
+        opacity: 1;
+        transform: scaleX(1);
+      }
     }
 
     @media (max-width: 768px) {
-      padding: 0.75rem 1rem;
-      font-size: 0.9rem;
-
-      svg {
-        width: 18px;
-        height: 18px;
-      }
+      padding: 1rem;
+      gap: 0.75rem;
     }
+  }
+
+  .tab-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: rgba(theme.color('primary'), 0.12);
+    color: theme.color('primary');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .tab-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .tab-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: theme.color('espresso');
+  }
+
+  .tab-desc {
+    font-size: 0.85rem;
+    color: theme.color('text-soft');
+  }
+
+  .tab-badge {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: theme.color('primary');
+    background: rgba(theme.color('primary'), 0.15);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    align-self: flex-start;
+
+    &.muted {
+      background: rgba(theme.color('danger'), 0.12);
+      color: theme.color('danger');
+    }
+
+    &.highlight {
+      background: rgba(theme.color('gold'), 0.2);
+      color: theme.color('gold-dark');
+    }
+
+    &.pill {
+      background: rgba(theme.color('brand-blue'), 0.15);
+      color: theme.color('brand-blue');
+    }
+  }
+
+  .tab-indicator {
+    position: absolute;
+    inset-inline: 1.5rem;
+    bottom: 0.9rem;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    transform: scaleX(0.4);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
   }
 }
 

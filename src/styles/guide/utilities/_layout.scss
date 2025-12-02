@@ -1,0 +1,50 @@
+@use '../abstracts/variables' as vars;
+
+@mixin flex-center($direction: row, $gap: 1rem, $justify: center) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  justify-content: $justify;
+  gap: $gap;
+}
+
+@mixin section-padding($top: 4rem, $bottom: 4rem) {
+  padding: $top 0 $bottom;
+}
+
+@mixin responsive-grid($min: 250px, $gap: 1.5rem) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min, 1fr));
+  gap: $gap;
+}
+
+@mixin scrollbar(
+  $thumb: vars.color('primary'),
+  $track: vars.color('gray-200')
+) {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track;
+    border-radius: vars.radius('pill');
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: vars.radius('pill');
+  }
+}
+
+@mixin respond-to($breakpoint) {
+  $size: map-get(vars.$breakpoints, $breakpoint);
+  @if $size {
+    @media (max-width: $size) {
+      @content;
+    }
+  } @else {
+    @warn 'Unknown breakpoint `#{$breakpoint}`. Available: #{map-keys(vars.$breakpoints)}';
+  }
+}

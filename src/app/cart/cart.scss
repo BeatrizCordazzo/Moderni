@@ -447,35 +447,6 @@
   }
 }
 
-.payment-methods {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid theme.color('primary', 0.2);
-  text-align: center;
-
-  p {
-    font-size: 0.9rem;
-    color: theme.color('text-muted');
-    margin: 0 0 1rem;
-  }
-
-  .payment-icons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-
-    .payment-icon {
-      font-size: 2rem;
-      filter: grayscale(50%);
-      transition: filter 0.3s ease;
-
-      &:hover {
-        filter: grayscale(0%);
-      }
-    }
-  }
-}
-
 // Carrito vacÃ­o
 .empty-cart {
   background: linear-gradient(135deg, theme.color('surface') 0%, theme.color('surface-alt') 100%);
