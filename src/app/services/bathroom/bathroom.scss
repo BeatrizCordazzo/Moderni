@@ -1247,18 +1247,22 @@
   .admin-option-modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    padding: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(8, 15, 23, 0.65);
+    backdrop-filter: blur(6px);
     z-index: 1000;
 
     .admin-option-panel {
-      width: min(900px, 90%);
+      width: min(640px, calc(100% - 32px));
+      border-radius: 24px;
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35);
       overflow: hidden;
+      animation: adminModalIn 0.35s ease forwards;
       display: flex;
       flex-direction: column;
     }
@@ -1267,57 +1271,137 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #eee;
+      padding: 20px 28px;
+      background: linear-gradient(135deg, theme.color('primary-dark'), rgba(15, 23, 42, 0.95));
+      color: #fff;
 
       h3 {
         margin: 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
       }
 
       .close-btn {
-        background: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
         border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
         font-size: 1.5rem;
         cursor: pointer;
-        line-height: 1;
+        transition: transform 0.2s ease, background 0.2s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          background: rgba(255, 255, 255, 0.25);
+        }
       }
     }
 
     .panel-body {
-      padding: 20px;
-      max-height: 60vh;
+      padding: 28px;
+      background: #f8fafc;
+      max-height: 65vh;
       overflow-y: auto;
+
+      .admin-form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+
+        label {
+          background: #fff;
+          border-radius: 14px;
+          padding: 14px 16px;
+          border: 1px solid #e5e7eb;
+          box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+          font-size: 0.85rem;
+          color: #475467;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          input {
+            border: none;
+            background: rgba(249, 250, 251, 0.9);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            color: #0f172a;
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
+            transition: box-shadow 0.2s ease;
+
+            &:focus {
+              outline: none;
+              box-shadow: inset 0 0 0 1px #4caf50;
+            }
+          }
+
+          &.wide {
+            grid-column: 1 / -1;
+          }
+        }
+      }
     }
 
     .panel-footer {
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 16px 20px;
-      border-top: 1px solid #eee;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      background: #fff;
+      border-top: 1px solid #f1f5f9;
 
       .btn-cancel,
       .btn-save {
         border: none;
-        border-radius: 6px;
-        padding: 10px 18px;
+        border-radius: 999px;
+        padding: 12px 26px;
         font-weight: 600;
         cursor: pointer;
+        font-size: 0.95rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
 
       .btn-cancel {
-        background: #eceff1;
-        color: #333;
+        background: #e2e8f0;
+        color: #0f172a;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 15px rgba(15, 23, 42, 0.08);
+        }
       }
 
       .btn-save {
-        background: #1976d2;
+        background: #0ea5e9;
         color: #fff;
+        box-shadow: 0 12px 25px rgba(14, 165, 233, 0.35);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 14px 30px rgba(14, 165, 233, 0.45);
+        }
 
         &:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+          box-shadow: none;
         }
       }
+    }
+  }
+
+  @keyframes adminModalIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   }

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 import { FormsModule } from '@angular/forms';
@@ -25,7 +26,7 @@ export interface CartItem {
 
 @Component({
   selector: 'app-cart-confirmation-modal',
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cart-confirmation-modal.html',
   styleUrl: './cart-confirmation-modal.scss'
 })

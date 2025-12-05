@@ -266,3 +266,11 @@
   (cancel)="cancelDelete()"
 >
 </app-confirmation-modal>
+
+@if (showToast) {
+<app-toast-notification
+  [message]="toastMessage"
+  [type]="toastType"
+  [duration]="toastDuration"
+></app-toast-notification>
+}

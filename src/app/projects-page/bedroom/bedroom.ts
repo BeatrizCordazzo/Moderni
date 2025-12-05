@@ -4,10 +4,11 @@ import { Datos, ShowcaseProject } from '../../datos';
 import { ConfirmationModal } from '../../shared/confirmation-modal/confirmation-modal';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastNotification } from '../../shared/toast-notification/toast-notification';
 
 @Component({
   selector: 'app-bedroom',
-  imports: [CommonModule, ConfirmationModal],
+  imports: [CommonModule, ConfirmationModal, ToastNotification],
   templateUrl: './bedroom.html',
   styleUrl: './bedroom.scss',
 })
@@ -23,6 +24,11 @@ export class Bedroom implements OnInit, OnDestroy {
   projectToDelete: number | null = null;
 
   private projectsSubscription?: Subscription;
+  showToast = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' | 'warning' = 'success';
+  toastDuration = 3000;
+  private toastTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(private datosService: Datos, private router: Router) {}
 
@@ -39,6 +45,9 @@ export class Bedroom implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.projectsSubscription) {
       this.projectsSubscription.unsubscribe();
+    }
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
     }
   }
 
@@ -105,12 +114,15 @@ export class Bedroom implements OnInit, OnDestroy {
       next: () => {
         this.showDeleteConfirm = false;
         this.projectToDelete = null;
+        this.triggerToast('Project deleted successfully.', 'success');
       },
       error: (err) => {
         console.error('Error deleting project:', err);
         this.showDeleteConfirm = false;
         this.projectToDelete = null;
         this.errorMessage = 'Error deleting the project.';
+        const message = err?.error?.error || 'Error deleting the project.';
+        this.triggerToast(message, 'error');
       },
     });
   }
@@ -141,5 +153,17 @@ export class Bedroom implements OnInit, OnDestroy {
 
   goToContact() {
     this.router.navigate(['/contact']);
+  }
+
+  private triggerToast(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'success'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+    this.toastTimeout = setTimeout(() => {
+      this.showToast = false;
+    }, this.toastDuration);
   }
 }

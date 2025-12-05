@@ -891,6 +891,7 @@ export class AdminCarpintero implements OnInit {
       this.datos.acceptPresupuesto(target).subscribe({
         next: () => {
           this.loadPending();
+          this.loadAcceptedProjects();
           this.showToast('Budget accepted', 'success');
         },
         error: () => this.showToast('Error accepting budget', 'error'),
@@ -1037,6 +1038,7 @@ export class AdminCarpintero implements OnInit {
     this.datos.acceptPresupuesto(id, finalPrice).subscribe({
       next: () => {
         this.loadPending();
+        this.loadAcceptedProjects();
         this.showToast('Budget accepted and price sent to client', 'success');
       },
       error: () => this.showToast('Error accepting budget', 'error'),
