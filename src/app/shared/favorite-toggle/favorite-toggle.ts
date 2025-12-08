@@ -52,6 +52,12 @@ export class FavoriteToggleComponent implements OnInit, OnDestroy {
     }
     this.isLoading = true;
     if (this.isFavorite && this.favoriteId) {
+      const label = this.itemName || 'this item';
+      const confirmed = window.confirm(`Remove "${label}" from favorites?`);
+      if (!confirmed) {
+        this.isLoading = false;
+        return;
+      }
       this.datosService.removeFavoriteById(this.favoriteId).subscribe({
         next: () => { this.isLoading = false; },
         error: (err) => this.handleError(err)

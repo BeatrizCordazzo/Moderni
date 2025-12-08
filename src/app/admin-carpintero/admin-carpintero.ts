@@ -98,6 +98,15 @@ export class AdminCarpintero implements OnInit {
   managedUsersSearch = '';
   savingUser = false;
   createUserForm: UserFormModel = this.createEmptyUserForm();
+  private pendingCreateUserPayload:
+    | (ManagedUserPayload & {
+        nombre: string;
+        email: string;
+        rol: ManagedUserRole;
+        password: string;
+        telefono: string | null;
+      })
+    | null = null;
 
   private readonly nameRegex = /^[A-Za-z\u00C0-\u024F\s]+$/;
   private readonly emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -575,6 +584,7 @@ export class AdminCarpintero implements OnInit {
       email: string;
       rol: ManagedUserRole;
       password: string;
+      telefono: string | null;
     } = {
       nombre,
       email,
@@ -583,22 +593,12 @@ export class AdminCarpintero implements OnInit {
       password: passwordValue,
     };
 
-    this.savingUser = true;
-    this.datos.createManagedUser(payload).subscribe({
-      next: () => {
-        this.showToast('User created', 'success');
-        this.savingUser = false;
-        // Reset model for the form (button 'Nuevo' and helper removed)
-        this.createUserForm = this.createEmptyUserForm();
-        this.loadManagedUsers();
-      },
-      error: (err: any) => {
-        console.error('Error saving user', err);
-        const message = err?.error?.error || 'Failed to create the user';
-        this.showToast(message, 'error');
-        this.savingUser = false;
-      },
-    });
+    this.pendingCreateUserPayload = payload;
+    const roleLabel = form.rol === 'arquitecto' ? 'an architect' : 'a client';
+    this.confirmMessage = `Do you want to create ${nombre} as ${roleLabel}?`;
+    this.confirmAction = 'createManagedUser';
+    this.confirmTargetId = null;
+    this.showConfirmModal = true;
   }
 
   confirmDeleteManagedUser(user: ManagedUser): void {
@@ -927,6 +927,8 @@ export class AdminCarpintero implements OnInit {
         this.deleteManagedUser(target);
       } else if (action === 'deleteSketchupProject' && target) {
         this.deleteSketchupProject(target);
+      } else if (action === 'createManagedUser' && this.pendingCreateUserPayload) {
+        this.createManagedUser(this.pendingCreateUserPayload);
       }
     }
 
@@ -1027,6 +1029,7 @@ export class AdminCarpintero implements OnInit {
     this.confirmAction = null;
     this.confirmTargetId = null;
     this.pendingArchitectDecision = null;
+    this.pendingCreateUserPayload = null;
   }
 
   // Price modal handlers
@@ -1109,5 +1112,33 @@ export class AdminCarpintero implements OnInit {
     setTimeout(() => {
       this.toastVisible = false;
     }, duration + 400);
+  }
+
+  private createManagedUser(
+    payload: ManagedUserPayload & {
+      nombre: string;
+      email: string;
+      rol: ManagedUserRole;
+      password: string;
+      telefono: string | null;
+    }
+  ): void {
+    this.savingUser = true;
+    this.datos.createManagedUser(payload).subscribe({
+      next: () => {
+        this.showToast('User created', 'success');
+        this.savingUser = false;
+        this.pendingCreateUserPayload = null;
+        this.createUserForm = this.createEmptyUserForm();
+        this.loadManagedUsers();
+      },
+      error: (err: any) => {
+        console.error('Error saving user', err);
+        const message = err?.error?.error || 'Failed to create the user';
+        this.showToast(message, 'error');
+        this.savingUser = false;
+        this.pendingCreateUserPayload = null;
+      },
+    });
   }
 }

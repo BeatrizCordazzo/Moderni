@@ -30,11 +30,19 @@ try {
     $rol = isset($data['rol']) ? $data['rol'] : 'cliente';
 
     if (!$email || !$password || !$nombre) {
-        throw new Exception('Nombre, email y contraseña son obligatorios');
+        throw new Exception('Name, email, and password are required fields');
+    }
+
+    if (!preg_match('/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/', $email)) {
+        throw new Exception('Email must be a valid email address');
+    }
+
+    if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/', $password)) {
+        throw new Exception('Password must be at least 6 characters and include an uppercase letter, number, and special character');
     }
 
     if (!preg_match('/^[\p{L}\s]+$/u', $nombre)) {
-        throw new Exception('El nombre solo puede contener letras y espacios');
+        throw new Exception('The name can only contain letters and spaces');
     }
 
     $pdo = get_pdo_connection();
@@ -42,7 +50,7 @@ try {
     $checkStmt = $pdo->prepare('SELECT email FROM usuarios WHERE email = ?');
     $checkStmt->execute([$email]);
     if ($checkStmt->fetch(PDO::FETCH_ASSOC)) {
-        echo json_encode(['success' => false, 'mensaje' => 'El email ya existe']);
+        echo json_encode(['success' => false, 'mensaje' => 'The email already exists']);
         exit;
     }
 
@@ -52,7 +60,7 @@ try {
 
     echo json_encode([
         'success' => true,
-        'mensaje' => 'Usuario registrado exitosamente',
+        'mensaje' => 'User registered successfully',
     ]);
 } catch (Exception $e) {
     http_response_code(400);

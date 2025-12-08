@@ -135,6 +135,13 @@ export class Profile implements OnInit, OnDestroy {
 
   // Modal de confirmación de logout
   showLogoutConfirmModal = false;
+  showReviewConfirmModal = false;
+  reviewConfirmMessage = 'Do you want to submit this review?';
+  pendingReviewOrder: Order | null = null;
+  pendingReviewPayload: OrderReviewPayload | null = null;
+  showFavoriteConfirmModal = false;
+  pendingFavoriteId: number | null = null;
+  pendingFavoriteName = 'this item';
 
   // Toast de perfil
   showProfileToast = false;
@@ -629,7 +636,18 @@ export class Profile implements OnInit, OnDestroy {
     }
   }
 
-  removeFavorite(id: number): void {
+  requestRemoveFavorite(item: FavoriteItem): void {
+    if (!item) return;
+    const id = Number(item.id ?? item.item_id);
+    if (!id || Number.isNaN(id)) {
+      return;
+    }
+    this.pendingFavoriteId = id;
+    this.pendingFavoriteName = item.item_name || 'this item';
+    this.showFavoriteConfirmModal = true;
+  }
+
+  private removeFavorite(id: number): void {
     if (!id) return;
     this.datosService.removeFavoriteById(id).subscribe({
       error: (err) => console.error('Error removing favorite', err),
@@ -672,14 +690,44 @@ export class Profile implements OnInit, OnDestroy {
     }
   }
 
-  submitOrderReview(order: Order): void {
-    if (!order || !order.pendingReview || !order.canReview) return;
-    const payload: OrderReviewPayload = {
+  requestSubmitOrderReview(order: Order): void {
+    if (!order || !order.canReview) return;
+    const payload = this.buildReviewPayload(order);
+    if (!payload) {
+      return;
+    }
+    const detailsName =
+      order.name ||
+      (order.items && order.items.length ? order.items[0].name : '') ||
+      '';
+    this.reviewConfirmMessage = detailsName
+      ? `Do you want to submit your review for "${detailsName}"?`
+      : 'Do you want to submit this review?';
+    this.pendingReviewOrder = order;
+    this.pendingReviewPayload = payload;
+    this.showReviewConfirmModal = true;
+  }
+
+  private buildReviewPayload(order: Order): OrderReviewPayload | null {
+    if (!order.pendingReview) {
+      order.reviewError = 'Please write your review before submitting.';
+      return null;
+    }
+    const rating = Number(order.pendingReview.rating) || 0;
+    if (rating < 1 || rating > 5) {
+      order.reviewError = 'Please select a rating between 1 and 5.';
+      return null;
+    }
+    const comment = order.pendingReview.comment?.trim() || '';
+    return {
       order_id: order.id,
       order_type: order.type === 'custom' ? 'custom' : 'pedido',
-      rating: order.pendingReview.rating,
-      comment: order.pendingReview.comment?.trim() || '',
+      rating,
+      comment,
     };
+  }
+
+  private submitOrderReview(order: Order, payload: OrderReviewPayload): void {
     order.reviewSubmitting = true;
     order.reviewError = '';
     this.datosService.submitOrderReview(payload).subscribe({
@@ -698,6 +746,25 @@ export class Profile implements OnInit, OnDestroy {
         order.reviewError = err?.error?.error || 'Unable to submit your review right now.';
       },
     });
+  }
+
+  onConfirmReviewSubmit(): void {
+    if (!this.pendingReviewOrder || !this.pendingReviewPayload) {
+      this.onCancelReviewSubmit();
+      return;
+    }
+    const order = this.pendingReviewOrder;
+    const payload = this.pendingReviewPayload;
+    this.pendingReviewOrder = null;
+    this.pendingReviewPayload = null;
+    this.showReviewConfirmModal = false;
+    this.submitOrderReview(order, payload);
+  }
+
+  onCancelReviewSubmit(): void {
+    this.showReviewConfirmModal = false;
+    this.pendingReviewOrder = null;
+    this.pendingReviewPayload = null;
   }
 
   loadArchitectProjects(): void {
@@ -990,5 +1057,22 @@ export class Profile implements OnInit, OnDestroy {
 
   onCancelProfileSave(): void {
     this.showProfileConfirmModal = false;
+  }
+
+  onConfirmRemoveFavorite(): void {
+    if (!this.pendingFavoriteId) {
+      this.onCancelRemoveFavorite();
+      return;
+    }
+    const id = this.pendingFavoriteId;
+    this.pendingFavoriteId = null;
+    this.showFavoriteConfirmModal = false;
+    this.removeFavorite(id);
+  }
+
+  onCancelRemoveFavorite(): void {
+    this.showFavoriteConfirmModal = false;
+    this.pendingFavoriteId = null;
+    this.pendingFavoriteName = 'this item';
   }
 }

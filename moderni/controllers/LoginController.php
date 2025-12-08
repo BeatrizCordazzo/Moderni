@@ -12,7 +12,7 @@ class LoginController
     public function handle(array $payload): void
     {
         if (!$this->isValidPayload($payload)) {
-            LoginJsonView::sendError('Datos incompletos');
+            LoginJsonView::sendError('Incomplete login data.');
             return;
         }
 
