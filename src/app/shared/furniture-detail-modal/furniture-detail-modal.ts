@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class FurnitureDetailModal implements OnChanges {
   @Input() isOpen = false;
-  @Input() title = 'Detalles del proyecto';
+  @Input() title = 'Project Details';
   @Input() data: any = null; // presupuesto, proyecto u order
   @Output() cancel = new EventEmitter<void>();
 
