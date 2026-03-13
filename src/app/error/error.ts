@@ -1,12 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Nav } from '../nav/nav';
 
 @Component({
   selector: 'app-error',
-  imports: [Nav],
+  standalone: true,
+  imports: [CommonModule, Nav],
   templateUrl: './error.html',
-  styleUrl: './error.scss'
+  styleUrl: './error.scss',
 })
-export class Error {
-
-}
+export class Error {}

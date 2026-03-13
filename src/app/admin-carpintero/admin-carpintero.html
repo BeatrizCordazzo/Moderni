@@ -810,42 +810,5 @@
     </mat-tab-group>
   </div>
 
-  @if (showRejectionModal) {
-  <app-rejection-modal
-    [isOpen]="showRejectionModal"
-    [(motivo)]="rejectionMotivo"
-    (confirm)="sendReject()"
-    (cancel)="closeModal()"
-  >
-  </app-rejection-modal>
-  } @if (showConfirmModal) {
-  <app-confirmation-modal
-    [isOpen]="showConfirmModal"
-    [message]="confirmMessage"
-    (confirm)="onConfirmModalConfirm()"
-    (cancel)="onConfirmModalCancel()"
-  >
-  </app-confirmation-modal>
-  } @if (showPriceModal) {
-  <app-price-modal
-    [isOpen]="showPriceModal"
-    [presupuesto]="priceModalPresupuesto"
-    (confirm)="onPriceModalConfirm($event)"
-    (cancel)="onPriceModalCancel()"
-    (invalid)="showToast($event, 'warning')"
-  >
-  </app-price-modal>
-  } @if (showDetailModal) {
-  <app-furniture-detail-modal
-    [isOpen]="showDetailModal"
-    [data]="detailModalData"
-    (cancel)="closeDetails()"
-  >
-  </app-furniture-detail-modal>
-  } @if (toastVisible) {
-  <app-toast-notification [message]="toastMessage" [type]="toastType" [duration]="toastDuration">
-  </app-toast-notification>
-  }
-
   <app-footer></app-footer>
 </main>

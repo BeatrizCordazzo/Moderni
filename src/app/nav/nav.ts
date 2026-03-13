@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { Component, HostListener, Input, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,6 +24,7 @@ interface SearchResult {
 
 @Component({
   selector: 'app-nav',
+  standalone: true,
   imports: [
     CommonModule,
     MatToolbarModule,
@@ -39,6 +40,7 @@ interface SearchResult {
 })
 export class Nav implements OnInit {
   title = signal('Moderni');
+  @Input() variant: 'default' | 'projects' = 'default';
   searchQuery = '';
   isAdmin = false;
   userName: string | null = null;

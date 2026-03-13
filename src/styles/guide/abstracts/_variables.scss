@@ -1,0 +1,107 @@
+﻿// Core design tokens and helper functions for the Moderni style guide.
+$font-primary: 'Roboto', 'Helvetica Neue', sans-serif !default;
+
+$colors: (
+  'primary': #8b7355,
+  'primary-dark': #654321,
+  'espresso': #3e2723,
+  'text-muted': #6d4c41,
+  'text-soft': #8d6e63,
+  'ink': #333333,
+  'slate': #555555,
+  'navy': #0f172a,
+  'gold': #fbbf24,
+  'gold-dark': #b45309,
+  'gold-light': #fffbe6,
+  'danger': #e53935,
+  'danger-dark': #c62828,
+  'danger-strong': #b91c1c,
+  'brand-blue': #0b74de,
+  'success': #0f9d58,
+  'info': #1d4ed8,
+  'charcoal': #4b5563,
+  'gray-700': #374151,
+  'gray-500': #6b7280,
+  'gray-300': #e5e7eb,
+  'gray-200': #f3f4f6,
+  'gray-100': #f5f5f5,
+  'linen': #f5f2ed,
+  'sand': #fef3c7,
+  'surface': #ffffff,
+  'surface-alt': #f9f9f9,
+  'surface-ice': #fbfdff,
+  'surface-muted': #fafafa
+) !default;
+
+@function color($name, $alpha: null) {
+  $value: map-get($colors, $name);
+  @if $value == null {
+    @error 'Unknown color `#{$name}`. Available keys: #{map-keys($colors)}';
+  }
+  @if $alpha == null {
+    @return $value;
+  }
+  @return rgba($value, $alpha);
+}
+
+$space-unit: 0.25rem !default;
+
+@function space($multiplier) {
+  @return $space-unit * $multiplier;
+}
+
+$radii: (
+  'sm': 6px,
+  'md': 12px,
+  'lg': 20px,
+  'xl': 30px,
+  'pill': 999px
+) !default;
+
+@function radius($size: 'md') {
+  $value: map-get($radii, $size);
+  @if $value == null {
+    @error 'Unknown radius `#{$size}`. Available keys: #{map-keys($radii)}';
+  }
+  @return $value;
+}
+
+$shadows: (
+  'soft': 0 10px 30px rgba(color('primary'), 0.25),
+  'medium': 0 12px 32px rgba(color('primary-dark'), 0.28),
+  'lifted': 0 18px 40px rgba(#000, 0.12)
+) !default;
+
+@function shadow($name: 'soft') {
+  $value: map-get($shadows, $name);
+  @if $value == null {
+    @error 'Unknown shadow `#{$name}`. Available keys: #{map-keys($shadows)}';
+  }
+  @return $value;
+}
+
+$gradients: (
+  'cream': linear-gradient(180deg, #fafafa 0%, #ffffff 100%),
+  'brand': linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%),
+  'primary': linear-gradient(135deg, #8b7355 0%, #654321 100%),
+  'sunset': linear-gradient(135deg, #fbbf24 0%, #b45309 100%),
+  'danger': linear-gradient(135deg, #e53935 0%, #c62828 100%)
+) !default;
+
+@function gradient($name: 'cream') {
+  $value: map-get($gradients, $name);
+  @if $value == null {
+    @error 'Unknown gradient `#{$name}`. Available keys: #{map-keys($gradients)}';
+  }
+  @return $value;
+}
+
+$footer-offset: 120px !default;
+
+$breakpoints: (
+  'desktop': 1440px,
+  'laptop': 1200px,
+  'tablet': 1024px,
+  'mobile': 768px,
+  'mobile-sm': 480px
+) !default;

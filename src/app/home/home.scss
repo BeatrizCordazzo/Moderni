@@ -418,7 +418,7 @@ app-projects {
 }
 
 .why-card {
-  background: theme.color('surface');
+  background: linear-gradient(135deg, rgba(theme.color('surface'), 0.95), rgba(theme.color('sand'), 0.35));
   border-radius: 14px;
   border: 1px solid rgba(theme.color('primary-dark'), 0.14);
   padding: 1.25rem;

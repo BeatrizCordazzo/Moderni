@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-projects',
+  standalone: true,
   imports: [MatCardModule, MatButtonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './projects.html',
-  styleUrl: './projects.scss'
+  styleUrl: './projects.scss',
 })
 export class Projects {
   @ViewChild('projectsViewport') projectsViewport?: ElementRef<HTMLDivElement>;

@@ -1,9 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Nav } from "../nav/nav";
-import { Projects } from "../projects/projects";
-import { Footer } from "../footer/footer";
 import { RouterLink } from '@angular/router';
-
+import { Footer } from '../footer/footer';
+import { Nav } from '../nav/nav';
+import { Projects } from '../projects/projects';
 
 interface Project {
   title: string;
@@ -13,9 +13,10 @@ interface Project {
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Projects, Footer, RouterLink],
+  standalone: true,
+  imports: [CommonModule, Nav, Projects, Footer, RouterLink],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrl: './home.scss',
 })
 export class Home implements OnInit, OnDestroy {
   currentSlide = 0;

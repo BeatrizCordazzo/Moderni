@@ -7,11 +7,6 @@ import { Footer } from '../footer/footer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-import { RejectionModal } from '../shared/rejection-modal/rejection-modal';
-import { ConfirmationModal } from '../shared/confirmation-modal/confirmation-modal';
-import { PriceModal } from '../shared/price-modal/price-modal.component';
-import { FurnitureDetailModal } from '../shared/furniture-detail-modal/furniture-detail-modal';
-import { ToastNotification } from '../shared/toast-notification/toast-notification';
 import {
   ArchitectProject,
   ContactMessage,
@@ -37,12 +32,7 @@ interface UserFormModel {
     Footer,
     CommonModule,
     FormsModule,
-    RejectionModal,
-    ConfirmationModal,
-    ToastNotification,
     MatTabsModule,
-    PriceModal,
-    FurnitureDetailModal,
   ],
   templateUrl: './admin-carpintero.html',
   styleUrls: ['./admin-carpintero.scss'],

@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Nav } from '../nav/nav';
 import { Footer } from '../footer/footer';
 
@@ -293,7 +293,7 @@ const PROJECTS_DATA: GalleryProject[] = [
     resumen: 'Panel hecho a medida.',
   },
   {
-    titulo: 'Panel para habitacón',
+    titulo: 'Panel para habitación',
     etiqueta: 'Dormitorio',
     imagen: '/projects/panel_cama.jpg',
     resumen: 'Panel hecho a medida.',
@@ -344,6 +344,7 @@ const PROJECTS_DATA: GalleryProject[] = [
 
 @Component({
   selector: 'app-projects-page',
+  standalone: true,
   imports: [Nav, Footer],
   templateUrl: './projects-page.html',
   styleUrl: './projects-page.scss'
@@ -363,3 +364,4 @@ export class ProjectsPage {
     this.selectedFilter = filter;
   }
 }
+
