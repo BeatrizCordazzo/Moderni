@@ -154,6 +154,36 @@
   }
 }
 
+@media (max-width: 768px) {
+  .projects-scroll-wrap {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .projects-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.75rem;
+  }
+
+  .projects-container {
+    gap: 0.75rem;
+    padding: 0.25rem 0.35rem;
+    scroll-snap-align: start;
+  }
+
+  .project-card {
+    flex: 0 0 75%;
+    scroll-snap-align: start;
+  }
+
+  .scroll-arrow {
+    display: none;
+  }
+}
+
 .projects-footer {
   margin-top: 1.7rem;
   display: flex;
