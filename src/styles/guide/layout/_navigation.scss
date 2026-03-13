@@ -96,3 +96,32 @@
     }
   }
 }
+
+body.projects-page-active {
+  app-nav {
+    mat-toolbar.navbar {
+      position: relative !important;
+      background: linear-gradient(135deg, #4d2b15, #6b4122) !important;
+      color: #f6eadf !important;
+      padding: 16px 24px !important;
+      box-shadow: vars.shadow('soft') !important;
+      border-bottom: none !important;
+    }
+
+    .nav-options .nav-button,
+    .nav-actions .icon-btn,
+    .logo-container .logo-image {
+      color: #f6eadf !important;
+    }
+
+    .search-box {
+      background: rgba(#ffffff, 0.18) !important;
+      border: 1px solid rgba(#ffffff, 0.3) !important;
+
+      input,
+      .search-submit {
+        color: #2b1a0f !important;
+      }
+    }
+  }
+}

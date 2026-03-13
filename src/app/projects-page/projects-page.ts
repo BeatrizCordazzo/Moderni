@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Nav } from '../nav/nav';
 import { Footer } from '../footer/footer';
 
@@ -349,7 +350,22 @@ const PROJECTS_DATA: GalleryProject[] = [
   templateUrl: './projects-page.html',
   styleUrl: './projects-page.scss'
 })
-export class ProjectsPage {
+export class ProjectsPage implements OnInit, OnDestroy {
+  private readonly bodyClass = 'projects-page-active';
+
+  constructor(
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
+
+  ngOnInit(): void {
+    this.renderer.addClass(this.document.body, this.bodyClass);
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(this.document.body, this.bodyClass);
+  }
+
   readonly galleryProjects = PROJECTS_DATA;
   readonly filters = ['Todos', ...Array.from(new Set(this.galleryProjects.map(project => project.etiqueta)))];
   selectedFilter: string = 'Todos';
