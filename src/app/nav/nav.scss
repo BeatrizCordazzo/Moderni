@@ -16,9 +16,16 @@
   background: transparent; /* transparente para dejar ver la imagen */
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+}
+
 /* When a page requests a solid navbar (checkout, etc.) add this class to body: */
 body.solid-navbar .navbar {
-  position: fixed;
+  position: absolute !important;
   top: 0;
   left: 0;
   right: 0;
@@ -43,7 +50,6 @@ body.solid-navbar .navbar .search-box {
 .left-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 // Contenedor del logo
@@ -53,7 +59,7 @@ body.solid-navbar .navbar .search-box {
   align-items: center;
   cursor: pointer;
   flex-shrink: 0;
-  margin-left: -20px;
+  margin-left: 0;
 
   .logo-image {
     height: 55px;
@@ -85,30 +91,44 @@ body.solid-navbar .navbar .search-box {
 // Opciones de navegación
 .nav-options {
   display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 1;
+  padding: 0 16px;
 
   .nav-button {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    padding: 8px 14px;
+    border-radius: 999px;
     color: white;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+    text-decoration: none;
+    text-underline-offset: 4px;
+    font-weight: 500;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.08);
+      text-decoration: underline;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 4px;
+    padding: 0 8px;
+
+    .nav-button {
+      padding: 5px 7px;
+      font-size: 0.82rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 2px;
+    padding: 0 2px;
+
+    .nav-button {
+      padding: 4px 6px;
+      font-size: 0.76rem;
+      letter-spacing: 0.01em;
     }
   }
 }
@@ -280,6 +300,7 @@ body.solid-navbar .navbar .search-box {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .icon-btn {

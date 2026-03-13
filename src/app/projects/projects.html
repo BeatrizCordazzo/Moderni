@@ -1,62 +1,81 @@
 <div class="projects-section">
   <div class="projects-header">
-    <h2 class="projects-title">Some of Our Projects</h2>
-    <p class="projects-subtitle">Discover our latest interior design work</p>
+    <h2 class="projects-title">Algunos de nuestros proyectos</h2>
+    <p class="projects-subtitle">Descubre nuestro trabajo más reciente en diseño de interiores</p>
   </div>
   
+  <div class="projects-scroll-wrap">
+    <button class="scroll-arrow left" type="button" (click)="scrollProjects('left')" aria-label="Ver proyectos anteriores">‹</button>
+    <div class="projects-viewport" #projectsViewport>
   <div class="projects-container">
-    <mat-card class="project-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Modern Kitchen</mat-card-title>
-        <mat-card-subtitle>Interior Design</mat-card-subtitle>
-      </mat-card-header>
-    <img mat-card-image src="cocina.jpg" alt="Modern kitchen with contemporary design">
+    <mat-card class="project-card">
+    <img mat-card-image src="/projects/panel_nuevo.jpg" alt="Panel decorativo de madera con iluminación cálida">
     <mat-card-content>
       <p>
-        Modern kitchen design with premium finishes. We combine functionality 
-        and aesthetics to create unique spaces that transform the culinary experience.
+        Panel mural en madera con líneas verticales e iluminación indirecta ideal para recepciones modernas.
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button routerLink="/projects-page">VIEW MORE</button>
-      <button mat-button routerLink="/contact">CONTACT</button>
+      <button mat-button routerLink="/projects-page">VER MÁS</button>
     </mat-card-actions>
   </mat-card>
 
-  <mat-card class="project-card" appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>Panel Table</mat-card-title>
-      <mat-card-subtitle>Custom Furniture</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="mesa-panel.jpg" alt="Contemporary design panel table">
+  <mat-card class="project-card">
+    <img mat-card-image src="/projects/tienda.jpg" alt="Interior de tienda boutique con mobiliario a medida">
     <mat-card-content>
       <p>
-        Custom furniture with unique designs. We create pieces that perfectly adapt 
-        to your space, combining artisanal quality with modern design.
+        Espacio comercial con mostradores livianos y repisas integradas que resaltan el producto sin recargar.
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button routerLink="/projects-page">VIEW MORE</button>
-      <button mat-button routerLink="/contact">CONTACT</button>
+      <button mat-button routerLink="/projects-page">VER MÁS</button>
     </mat-card-actions>
   </mat-card>
 
-  <mat-card class="project-card" appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>Elegant Living Room</mat-card-title>
-      <mat-card-subtitle>Living Spaces</mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="salon.jpg" alt="Elegant living room with sophisticated design">
+  <mat-card class="project-card">
+    <img mat-card-image src="/projects/lavanderia.jpg" alt="Lavandería compacta organizada con gabinetes">
     <mat-card-content>
       <p>
-        Complete transformation of living spaces. We design living rooms that reflect 
-        personality and style, creating cozy and sophisticated environments.
+        Lavandería lineal con muebles superiores y nichos abiertos que mantienen insumos y cestas al alcance.
       </p>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button routerLink="/projects-page">VIEW MORE</button>
-      <button mat-button routerLink="/contact">CONTACT</button>
+      <button mat-button routerLink="/projects-page">VER MÁS</button>
     </mat-card-actions>
   </mat-card>
+
+  <mat-card class="project-card">
+    <img mat-card-image src="/projects/consultorio.jpg" alt="Consultorio minimalista con acentos de madera">
+    <mat-card-content>
+      <p>
+        Consultorio luminoso con mobiliario limpio y detalles en madera que transmiten calma y confianza.
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button routerLink="/projects-page">VER MÁS</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="project-card">
+    <img mat-card-image src="/projects/cocina_color.jpg" alt="Cocina contemporánea con gabinetes de color">
+    <mat-card-content>
+      <p>
+        Cocina a color con frentes satinados y cubierta continua que resalta el contraste de materiales.
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button routerLink="/projects-page">VER MÁS</button>
+    </mat-card-actions>
+  </mat-card>
+  </div>
+    </div>
+    <button class="scroll-arrow right" type="button" (click)="scrollProjects('right')" aria-label="Ver más proyectos">›</button>
+  </div>
+
+  <div class="projects-footer">
+    <a class="view-all-link" routerLink="/projects-page" aria-label="Ver todos los proyectos">
+      Ver todos los proyectos
+      <span aria-hidden="true">→</span>
+    </a>
   </div>
 </div>

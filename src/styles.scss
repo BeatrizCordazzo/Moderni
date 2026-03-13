@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-@use 'styles/theme' as theme;
 @import 'leaflet/dist/leaflet.css';
 
 // Angular Material base theme ------------------------------------------------
@@ -20,35 +19,16 @@ body {
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
   margin: 0;
-  font-family: theme.$font-primary;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
 html,
 body {
   height: 100%;
-}
-
-// Page specific nav treatments -----------------------------------------------
-app-home {
-  @include theme.nav-home-hover();
-}
-
-$nav-glass-pages: (
-  app-services,
-  app-profile,
-  app-checkout,
-  app-cart,
-  app-projects-page,
-  app-admin-carpintero
-);
-
-@each $page in $nav-glass-pages {
-  #{$page} {
-    @include theme.nav-glass(rgba(theme.color('primary-dark'), 0.95));
-  }
+  overflow-x: hidden;
 }
 
 // Layout helpers -------------------------------------------------------------
 app-root {
-  padding-bottom: theme.$footer-offset;
+  padding-bottom: 0;
 }

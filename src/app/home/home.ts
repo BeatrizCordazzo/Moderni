@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Nav } from "../nav/nav";
 import { Projects } from "../projects/projects";
-import { Preview } from "../preview/preview";
-import { Reviews } from "../reviews/reviews";
 import { Footer } from "../footer/footer";
+import { RouterLink } from '@angular/router';
 
 
 interface Project {
@@ -14,7 +13,7 @@ interface Project {
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Projects, Preview, Reviews, Footer],
+  imports: [Nav, Projects, Footer, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -24,30 +23,50 @@ export class Home implements OnInit, OnDestroy {
 
   projects: Project[] = [
     {
-      title: 'Modern Minimalist Kitchen',
-      description: 'Contemporary design with top-quality finishes',
-      image: 'https://images.unsplash.com/photo-1556912167-f556f1f39fdf?w=1200&h=600&fit=crop'
+      title: 'Area',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/area.png'
     },
     {
-      title: 'Elegant Living Room',
-      description: 'Cozy space with sophisticated style',
-      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop'
+      title: 'Bodega',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/bodega.png'
     },
     {
-      title: 'Dream Bedroom',
-      description: 'Your personal retreat for rest',
-      image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&h=600&fit=crop'
+      title: 'Cocina',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/cocina.png'
     },
     {
-      title: 'Spa Bathroom',
-      description: 'Comfort and elegance in every detail',
-      image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200&h=600&fit=crop'
+      title: 'Cuarto',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/cuarto.png'
     },
     {
-      title: 'Custom Furniture',
-      description: 'Unique pieces designed to measure',
-      image: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=1200&h=600&fit=crop'
-    }
+      title: 'Mesa Cuarto',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/mesa_cuarto.png'
+    },
+    {
+      title: 'Panel',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/Panel.png'
+    },
+    {
+      title: 'Panel Cuarto',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/panel_cuarto.png'
+    },
+    {
+      title: 'Salon Panel',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/salon_panel.png'
+    },
+    {
+      title: 'Tienda',
+      description: 'Proyecto Moderni',
+      image: '/carrousel/tienda.png'
+    },
   ];
 
   ngOnInit() {
@@ -84,5 +103,22 @@ export class Home implements OnInit, OnDestroy {
     this.currentSlide = index;
     this.stopAutoPlay();
     this.startAutoPlay();
+  }
+
+  getSlideTransform(index: number): string {
+    const totalSlides = this.projects.length;
+    if (!totalSlides) {
+      return 'translateX(0%)';
+    }
+
+    let offset = index - this.currentSlide;
+
+    if (offset > totalSlides / 2) {
+      offset -= totalSlides;
+    } else if (offset < -totalSlides / 2) {
+      offset += totalSlides;
+    }
+
+    return `translateX(${offset * 100}%)`;
   }
 }

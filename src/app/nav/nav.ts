@@ -43,10 +43,6 @@ export class Nav implements OnInit {
   isAdmin = false;
   userName: string | null = null;
 
-  drawerOpen = false;
-  servicesOpen = false;
-  projectsOpen = false;
-
   searchResults: SearchResult[] = [];
   showSearchResults = false;
   isLoadingSearch = false;
@@ -58,7 +54,7 @@ export class Nav implements OnInit {
       id: 'page-services',
       title: 'All Services',
       subtitle: 'Explore our full catalog of services',
-      route: '/services',
+      route: '/projects-page',
       type: 'Page',
       searchText: 'services service catalog all services custom projects design',
     },
@@ -126,24 +122,6 @@ export class Nav implements OnInit {
     this.searchQuery = '';
     this.searchResults = [];
     this.showSearchResults = false;
-  }
-
-  toggleDrawer(): void {
-    this.drawerOpen = !this.drawerOpen;
-  }
-
-  closeDrawer(): void {
-    this.drawerOpen = false;
-    this.servicesOpen = false;
-    this.projectsOpen = false;
-  }
-
-  toggleServices(): void {
-    this.servicesOpen = !this.servicesOpen;
-  }
-
-  toggleProjects(): void {
-    this.projectsOpen = !this.projectsOpen;
   }
 
   private prefetchSearchItems(initialQuery?: string): void {
@@ -215,12 +193,12 @@ export class Nav implements OnInit {
 
   private getProductRoute(product: Product): string {
     const category = (product.category || product.type || '').toLowerCase();
-    if (category.includes('kitchen')) return '/services/kitchen';
-    if (category.includes('bath')) return '/services/bathroom';
-    if (category.includes('bed')) return '/services/bedroom';
-    if (category.includes('living')) return '/services/livingroom';
-    if (category.includes('other')) return '/services/others';
-    return '/services';
+    if (category.includes('kitchen')) return '/projects-page/kitchen';
+    if (category.includes('bath')) return '/projects-page/bathroom';
+    if (category.includes('bed')) return '/projects-page/bedroom';
+    if (category.includes('living')) return '/projects-page/livingroom';
+    if (category.includes('other')) return '/projects-page/others';
+    return '/projects-page';
   }
 
   private getProjectRoute(project: ShowcaseProject): string {

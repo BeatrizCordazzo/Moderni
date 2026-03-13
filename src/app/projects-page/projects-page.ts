@@ -1,319 +1,365 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Nav } from "../nav/nav";
-import { Footer } from "../footer/footer";
+﻿import { Component } from '@angular/core';
+import { Nav } from '../nav/nav';
+import { Footer } from '../footer/footer';
 
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Datos, ShowcaseProject } from '../datos';
-import { ConfirmationModal } from '../shared/confirmation-modal/confirmation-modal';
-import { Subscription } from 'rxjs';
-import { ToastNotification } from '../shared/toast-notification/toast-notification';
+interface GalleryProject {
+  titulo: string;
+  etiqueta: string;
+  imagen: string;
+  resumen: string;
+}
+
+const PROJECTS_DATA: GalleryProject[] = [
+  {
+    titulo: 'Área Gourmet',
+    etiqueta: 'Gourmet',
+    imagen: '/projects/area_gourmet.jpg',
+    resumen: 'Área gourmet planeada a medida.',
+  },
+  {
+    titulo: 'Closet',
+    etiqueta: 'Vestidor',
+    imagen: '/projects/armario.jpg',
+    resumen: 'Montaje de closet con divisorias.',
+  },
+  {
+    titulo: 'Armario Arena con Espejo',
+    etiqueta: 'Vestidor',
+    imagen: '/projects/armarioRopa.jpg',
+    resumen: 'Armario con puerta espejada para habitación.',
+  },
+  {
+    titulo: 'Armario Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/armario_cocina.jpg',
+    resumen: 'Armario hecho a medida para cocina.',
+  },
+  {
+    titulo: 'Armario',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/armario_hab.jpg',
+    resumen: 'Armario a medida para habitación.',
+  },
+  {
+    titulo: 'Armario con Espejo',
+    etiqueta: 'Vestidor',
+    imagen: '/projects/armario_ropa.jpg',
+    resumen: 'Armario hecho a medida con puerta espejada.',
+  },
+  {
+    titulo: 'Armario con detalle',
+    etiqueta: 'Gourmet',
+    imagen: '/projects/armario_vino.jpg',
+    resumen: 'Armario hecho a medida con un detalle especial, pensado para vinos.',
+  },
+  {
+    titulo: 'Baño',
+    etiqueta: 'Baño',
+    imagen: '/projects/baño.jpg',
+    resumen: 'Baño con armarios a medida.',
+  },
+  {
+    titulo: 'Baño Compacto Blanco',
+    etiqueta: 'Baño',
+    imagen: '/projects/baño1.jpg',
+    resumen: 'Baño con armarios a medida.',
+  },
+  {
+    titulo: 'Litera',
+    etiqueta: 'Juvenil',
+    imagen: '/projects/beliche.jpg',
+    resumen: 'Litera robusta en MDF estructural con escalera.',
+  },
+  {
+    titulo: 'Cama',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/cama.jpg',
+    resumen: 'Cama hecha a medida con cajones inferiores.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina1.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina2.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina3.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina4.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina5.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina6.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina Gourmet',
+    etiqueta: 'Gourmet',
+    imagen: '/projects/cocina_area.jpg',
+    resumen: 'Cocina gourmet hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina_barra.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Cocina',
+    etiqueta: 'Cocina',
+    imagen: '/projects/cocina_color.jpg',
+    resumen: 'Cocina hecha a medida.',
+  },
+  {
+    titulo: 'Comercial',
+    etiqueta: 'Comercial',
+    imagen: '/projects/consultorio.jpg',
+    resumen: 'Proyecto comercial hecho a medida para un espacio para niños.',
+  },
+  {
+    titulo: 'Cuarto infantil',
+    etiqueta: 'Infantil',
+    imagen: '/projects/cuarto.jpg',
+    resumen: 'Cuarto infantil hecho a medida.',
+  },
+  {
+    titulo: 'Cuarto infantil',
+    etiqueta: 'Infantil',
+    imagen: '/projects/cuarto_bebe.jpg',
+    resumen: 'Cuarto infantil hecho a medida.',
+  },
+  {
+    titulo: 'Armario con escritorio',
+    etiqueta: 'Home Office',
+    imagen: '/projects/cuarto_mesa_aramario.jpg',
+    resumen: 'Armario con escritorio hecho a medida.',
+  },
+  {
+    titulo: 'Home Office',
+    etiqueta: 'Home Office',
+    imagen: '/projects/escritorio.jpg',
+    resumen: 'Home office hecho a medida.',
+  },
+  {
+    titulo: 'Panel Salón',
+    etiqueta: 'Paneles',
+    imagen: '/projects/espacio_vino.jpg',
+    resumen: 'Panel salón hecho a medida.',
+  },
+  {
+    titulo: 'Mesa de maquillaje',
+    etiqueta: 'Mesa',
+    imagen: '/projects/espejo.jpg',
+    resumen: 'Mesa de maquillaje con luces y espacios pensados para el cliente.',
+  },
+  {
+    titulo: 'Mesa de maquillaje',
+    etiqueta: 'Mesa',
+    imagen: '/projects/espejo_luz.jpg',
+    resumen: 'Mesa de maquillaje con luces y espacios pensados para el cliente.',
+  },
+  {
+    titulo: 'Mesa Vanity',
+    etiqueta: 'Mesa',
+    imagen: '/projects/espejo_mesa.jpg',
+    resumen: 'Vanity hecho a medida.',
+  },
+  {
+    titulo: 'Dormitorio',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/habitacion.jpg',
+    resumen: 'Dormitorio hecho a medida.',
+  },
+  {
+    titulo: 'Dormitorio',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/habitacion_panel.jpg',
+    resumen: 'Dormitorio hecho a medida.',
+  },
+  {
+    titulo: 'Dormitorio',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/habitacion_proyecto.jpg',
+    resumen: 'Dormitorio hecho a medida.',
+  },
+  {
+    titulo: 'Dormitorio',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/habProyecto.jpg',
+    resumen: 'Dormitorio hecho a medida.',
+  },
+  {
+    titulo: 'Mesa de maquillaje',
+    etiqueta: 'Mesa',
+    imagen: '/projects/iluminacion.jpg',
+    resumen: 'Mesa de maquillaje con luces y espacios pensados para el cliente.',
+  },
+  {
+    titulo: 'Accesorio',
+    etiqueta: 'Accesorios',
+    imagen: '/projects/joyero.jpg',
+    resumen: 'Espacio para accesorios hecho a medida.',
+  },
+  {
+    titulo: 'Lavandería',
+    etiqueta: 'Lavandería',
+    imagen: '/projects/lavanderia.jpg',
+    resumen: 'Lavandería hecha a medida.',
+  },
+  {
+    titulo: 'Mesa accesorio con espejo',
+    etiqueta: 'Mesa',
+    imagen: '/projects/mesa_espejo.jpg',
+    resumen: 'Mesa con espejo hecho a medida para maquillaje y accesorios.',
+  },
+  {
+    titulo: 'Mesa y zapatero',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/mesa_hab.jpg',
+    resumen: 'Mesa y zapatero hecho a medida para dormitorio.',
+  },
+  {
+    titulo: 'Mesa de Maquillaje',
+    etiqueta: 'Mesa',
+    imagen: '/projects/mueble_espejo.jpg',
+    resumen: 'Mesa de maquillaje con luces y espacios pensados para el cliente.',
+  },
+  {
+    titulo: 'Oficina',
+    etiqueta: 'Comercial',
+    imagen: '/projects/oficina.jpg',
+    resumen: 'Oficina hecha a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel1.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panelG.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Habitación',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/panelHAB.jpg',
+    resumen: 'Armarios para habitación con espacio para la cama hecho a medida.',
+  },
+  {
+    titulo: 'Mesa con panel para escritorio',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/panelHabitacion.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panelO.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel para habitacón',
+    etiqueta: 'Dormitorio',
+    imagen: '/projects/panel_cama.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel_detalle.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel_hab.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel_nuevo.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel_salon.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/panel_tele.jpg',
+    resumen: 'Panel hecho a medida.',
+  },
+  {
+    titulo: 'Panel',
+    etiqueta: 'Paneles',
+    imagen: '/projects/salon.jpg',
+    resumen: 'Panel hecha a medida.',
+  },
+  {
+    titulo: 'Comercial',
+    etiqueta: 'Comercial',
+    imagen: '/projects/tienda.jpg',
+    resumen: 'Proyecto comercial hecho a medida.',
+  },
+];
 
 @Component({
   selector: 'app-projects-page',
-  imports: [Nav, Footer, RouterLink, RouterOutlet, ReactiveFormsModule, ConfirmationModal, ToastNotification],
+  imports: [Nav, Footer],
   templateUrl: './projects-page.html',
   styleUrl: './projects-page.scss'
 })
-export class ProjectsPage implements OnInit, OnDestroy {
-  showcaseProjects: ShowcaseProject[] = [];
-  categoryCounts: { [key: string]: number } = {
-    kitchen: 0,
-    bathroom: 0,
-    bedroom: 0,
-    livingroom: 0,
-    others: 0
-  };
-  isLoading = true;
-  errorMessage = '';
-  isAdmin = false;
-  showAddForm = false;
-  isSaving = false;
-  saveError = '';
-  saveSuccess = '';
-  isUploadingImage = false;
-  imageUploadError = '';
-  imageUploadSuccess = '';
-  addProjectForm: FormGroup;
-  
-  // Confirmation modal
-  showDeleteConfirm = false;
-  projectToDelete: number | null = null;
-  
-  private projectsSubscription?: Subscription;
-  showToast = false;
-  toastMessage = '';
-  toastType: 'success' | 'error' | 'info' | 'warning' = 'success';
-  toastDuration = 3000;
-  private toastTimeout?: ReturnType<typeof setTimeout>;
+export class ProjectsPage {
+  readonly galleryProjects = PROJECTS_DATA;
+  readonly filters = ['Todos', ...Array.from(new Set(this.galleryProjects.map(project => project.etiqueta)))];
+  selectedFilter: string = 'Todos';
 
-  constructor(private datosService: Datos, private fb: FormBuilder) {
-    this.addProjectForm = this.fb.group({
-      titulo: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      categoria: ['kitchen', Validators.required],
-      cliente: ['', Validators.required],
-      ubicacion: ['', Validators.required],
-      fecha_completado: ['', Validators.required],
-      duracion_dias: [0, [Validators.required, Validators.min(1)]],
-      presupuesto: [0, [Validators.required, Validators.min(0)]],
-      imagenes: ['', Validators.required],
-      estilo: ['', Validators.required],
-      area_m2: [0, [Validators.required, Validators.min(1)]],
-      materiales: [''],
-      destacado: [false]
-    });
+  get filteredProjects(): GalleryProject[] {
+    return this.selectedFilter === 'Todos'
+      ? this.galleryProjects
+      : this.galleryProjects.filter(project => project.etiqueta === this.selectedFilter);
   }
 
-  ngOnInit() {
-    this.loadProjects();
-    this.checkAdminStatus();
-    
-    // Subscribe to project changes
-    this.projectsSubscription = this.datosService.showcaseProjectsChanged$.subscribe(() => {
-      this.loadProjects();
-    });
-  }
-  
-  ngOnDestroy() {
-    if (this.projectsSubscription) {
-      this.projectsSubscription.unsubscribe();
-    }
-    if (this.toastTimeout) {
-      clearTimeout(this.toastTimeout);
-    }
-  }
-  
-  checkAdminStatus() {
-    this.datosService.getLoggedUser().subscribe({
-      next: (user) => {
-        const role = user && (user.rol || user.role) ? (user.rol || user.role) : null;
-        this.isAdmin = !!role && ['admin', 'arquitecto'].includes(role);
-      },
-      error: () => { this.isAdmin = false; }
-    });
-  }
-
-  loadProjects() {
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    this.datosService.getShowcaseProjects().subscribe({
-      next: (projects) => {
-        this.showcaseProjects = projects;
-        this.calculateCategoryCounts();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading showcase projects:', error);
-        this.errorMessage = 'Error loading projects. Please try again.';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  calculateCategoryCounts() {
-    // Reset counts
-    Object.keys(this.categoryCounts).forEach(key => {
-      this.categoryCounts[key] = 0;
-    });
-    
-    // Count projects per category
-    this.showcaseProjects.forEach(project => {
-      if (this.categoryCounts.hasOwnProperty(project.categoria)) {
-        this.categoryCounts[project.categoria]++;
-      }
-    });
-  }
-
-  retryLoad() {
-    this.loadProjects();
-  }
-  
-  toggleAddForm() {
-    this.showAddForm = !this.showAddForm;
-    this.saveError = '';
-    this.imageUploadError = '';
-    this.imageUploadSuccess = '';
-    this.isUploadingImage = false;
-    if (!this.showAddForm) {
-      this.saveSuccess = '';
-      this.resetForm();
-    }
-  }
-
-  handleImageFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input?.files || input.files.length === 0 || this.isUploadingImage) {
-      return;
-    }
-    const file = input.files[0];
-    this.imageUploadError = '';
-    this.imageUploadSuccess = '';
-    this.isUploadingImage = true;
-
-    this.datosService.uploadShowcaseImage(file).subscribe({
-      next: (res) => {
-        this.isUploadingImage = false;
-        const url = res?.url ?? res?.relative ?? null;
-        if (!res?.success || !url) {
-          this.imageUploadError = res?.error || 'Image upload did not return a valid URL.';
-          input.value = '';
-          return;
-        }
-
-        const control = this.addProjectForm.get('imagenes');
-        const currentValue = (control?.value || '').toString();
-        const urls = this.parseImagenes(currentValue);
-        if (urls.length >= 4) {
-          this.imageUploadError = 'You can only add up to 4 images per project.';
-          input.value = '';
-          return;
-        }
-
-        urls.push(url);
-        control?.setValue(urls.join('\n'));
-        control?.markAsDirty();
-        control?.markAsTouched();
-        this.imageUploadSuccess = 'Image uploaded and added to the list.';
-        input.value = '';
-      },
-      error: (err) => {
-        console.error('Error uploading showcase image:', err);
-        this.isUploadingImage = false;
-        this.imageUploadError = err?.error?.error || 'Failed to upload the image.';
-        input.value = '';
-      }
-    });
-  }
-  
-  submitNewProject() {
-    if (!this.isAdmin || this.isSaving) {
-      return;
-    }
-
-    if (this.addProjectForm.invalid) {
-      this.addProjectForm.markAllAsTouched();
-      return;
-    }
-
-    const raw = this.addProjectForm.getRawValue();
-    const payload: any = {
-      titulo: raw.titulo?.trim(),
-      descripcion: raw.descripcion?.trim(),
-      categoria: raw.categoria,
-      cliente: raw.cliente?.trim(),
-      ubicacion: raw.ubicacion?.trim(),
-      fecha_completado: raw.fecha_completado,
-      duracion_dias: Number(raw.duracion_dias),
-      presupuesto: Number(raw.presupuesto),
-      imagenes: this.parseImagenes(raw.imagenes),
-      estilo: raw.estilo?.trim(),
-      area_m2: Number(raw.area_m2),
-      materiales: this.parseMateriales(raw.materiales),
-      destacado: raw.destacado ?? false
-    };
-
-    this.isSaving = true;
-    this.saveError = '';
-    this.saveSuccess = '';
-
-    this.datosService.createShowcaseProject(payload).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.saveSuccess = 'Project created successfully.';
-        this.resetForm();
-      },
-      error: (err) => {
-        this.isSaving = false;
-        this.saveError = err?.error?.error || 'Failed to create project.';
-      }
-    });
-  }
-  
-  confirmDeleteProject(projectId: number) {
-    this.projectToDelete = projectId;
-    this.showDeleteConfirm = true;
-  }
-  
-  cancelDelete() {
-    this.showDeleteConfirm = false;
-    this.projectToDelete = null;
-  }
-  
-  executeDelete() {
-    if (!this.isAdmin || !this.projectToDelete) {
-      return;
-    }
-    
-    this.datosService.deleteShowcaseProject(this.projectToDelete).subscribe({
-      next: () => {
-        this.showDeleteConfirm = false;
-        this.projectToDelete = null;
-        // Projects will be reloaded via subscription
-        this.triggerToast('Project deleted successfully.', 'success');
-      },
-      error: (err) => {
-        console.error('Error deleting project:', err);
-        this.showDeleteConfirm = false;
-        this.projectToDelete = null;
-        this.errorMessage = 'Error deleting project.';
-        const serverMsg = err?.error?.error;
-        this.triggerToast(serverMsg || 'Error deleting project.', 'error');
-      }
-    });
-  }
-  
-  private resetForm() {
-    this.addProjectForm.reset({
-      titulo: '',
-      descripcion: '',
-      categoria: 'kitchen',
-      cliente: '',
-      ubicacion: '',
-      fecha_completado: '',
-      duracion_dias: 0,
-      presupuesto: 0,
-      imagenes: '',
-      estilo: '',
-      area_m2: 0,
-      materiales: '',
-      destacado: false
-    });
-    this.imageUploadError = '';
-    this.imageUploadSuccess = '';
-    this.isUploadingImage = false;
-  }
-  
-  private parseImagenes(raw: string | null | undefined): string[] {
-    if (!raw) {
-      return [];
-    }
-    return raw
-      .split(/[\r\n,]+/)
-      .map(entry => entry.trim())
-      .filter(entry => entry.length > 0);
-  }
-  
-  private parseMateriales(raw: string | null | undefined): string[] {
-    if (!raw) {
-      return [];
-    }
-    return raw
-      .split(/[\r\n,]+/)
-      .map(entry => entry.trim())
-      .filter(entry => entry.length > 0);
-  }
-
-  private triggerToast(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'success'): void {
-    this.toastMessage = message;
-    this.toastType = type;
-    this.showToast = true;
-    if (this.toastTimeout) {
-      clearTimeout(this.toastTimeout);
-    }
-    this.toastTimeout = setTimeout(() => {
-      this.showToast = false;
-    }, this.toastDuration);
+  setFilter(filter: string): void {
+    this.selectedFilter = filter;
   }
 }
